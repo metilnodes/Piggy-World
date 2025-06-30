@@ -10,14 +10,14 @@ This is a basic Farcaster Mini App that demonstrates user authentication using t
 ## Setup
 
 1. Install dependencies:
-```bash
+\`\`\`bash
 npm install
-```
+\`\`\`
 
 2. Run the development server:
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -36,9 +36,9 @@ npm run dev
 ## Deploying to Farcaster
 
 1. Build the application:
-```bash
+\`\`\`bash
 npm run build
-```
+\`\`\`
 
 2. Deploy the built application to your preferred hosting service (Vercel, Netlify, etc.)
 
