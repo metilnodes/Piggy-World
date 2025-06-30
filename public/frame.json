@@ -1,0 +1,9 @@
+{
+  "image": "https://piggyworld.xyz/imageUrl.png",
+  "post_url": "https://piggyworld.xyz/api/frame",
+  "buttons": [
+    {
+      "label": "Join Piggy World"
+    }
+  ]
+}

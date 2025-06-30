@@ -1,0 +1,16 @@
+{
+  "name": "OINK World",
+  "short_name": "OINK",
+  "description": "Interactive OINK ecosystem with 7 unique locations",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#fd0c96",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

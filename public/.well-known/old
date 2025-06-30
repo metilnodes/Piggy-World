@@ -1,0 +1,17 @@
+{
+  "frame": {
+    "version": "1",
+    "name": "Piggy World",
+    "iconUrl": "https://v0-eban9in.vercel.app/icon.png",
+    "homeUrl": "https://v0-eban9in.vercel.app",
+    "imageUrl": "https://v0-eban9in.vercel.app/imageUrl.png",
+    "heroImageUrl": "https://v0-eban9in.vercel.app/imageUrl.png",
+    "ogImageUrl": "https://v0-eban9in.vercel.app/imageUrl.png",
+    "buttonTitle": "Enter Piggy World",
+    "splashImageUrl": "https://v0-eban9in.vercel.app/icon.png",
+    "splashBackgroundColor": "#000000",
+    "requiredChains": ["eip155:8453"],
+    "screenshotUrls": ["https://v0-eban9in.vercel.app/imageUrl.png"],
+    "requiredCapabilities": ["actions.signIn", "wallet.getEthereumProvider"]
+  }
+}

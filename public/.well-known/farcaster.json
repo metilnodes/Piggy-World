@@ -1,0 +1,20 @@
+{
+  "frame": {
+    "version": "1",
+    "name": "Piggy World",
+    "iconUrl": "https://piggyworld.xyz/icon.png",
+    "homeUrl": "https://piggyworld.xyz",
+    "imageUrl": "https://piggyworld.xyz/imageUrl.png",
+    "heroImageUrl": "https://piggyworld.xyz/imageUrl.png",
+    "ogImageUrl": "https://piggyworld.xyz/imageUrl.png",
+    "buttonTitle": "Join Piggy World",
+    "splashImageUrl": "https://piggyworld.xyz/icon.png",
+    "splashBackgroundColor": "#000000",
+    "requiredChains": ["eip155:8453"],
+    "primaryCategory": "social",
+    "subtitle": "Piggy is for the people",
+    "description": "THE FUTURE OF AI & CRYPTO LIVES WITH PIGGY",
+    "screenshotUrls": ["https://piggyworld.xyz/imageUrl.png"],
+    "requiredCapabilities": ["actions.signIn", "wallet.getEthereumProvider"]
+  }
+}
