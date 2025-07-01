@@ -28,27 +28,41 @@ function AuthenticatedApp() {
     const handleAddMiniApp = async () => {
       try {
         const alreadyPrompted = localStorage.getItem("miniAppPrompted")
+        console.log("🔍 alreadyPrompted:", alreadyPrompted)
 
         if (!alreadyPrompted) {
           const { initFrames, isInWarpcast } = await import("@/app/frames/index")
+          const isInFrame = isInWarpcast()
+          console.log("🖼️ Farcaster environment:", { isInFrame })
 
-          if (isInWarpcast()) {
+          if (isInFrame) {
             const sdk = await initFrames()
+            console.log("🔧 SDK:", sdk)
+
             if (sdk?.actions?.addMiniApp) {
               await sdk.actions.addMiniApp()
               localStorage.setItem("miniAppPrompted", "true")
               console.log("✅ AddMiniApp prompted.")
+            } else {
+              console.log("⚠️ SDK or addMiniApp not available")
             }
           } else {
             console.log("ℹ️ Not in Warpcast, skipping addMiniApp.")
           }
+        } else {
+          console.log("ℹ️ Already prompted, skipping addMiniApp.")
         }
       } catch (err) {
         console.error("❌ Error detecting Warpcast environment:", err)
       }
     }
 
-    handleAddMiniApp()
+    // Добавляем небольшую задержку для инициализации
+    const timer = setTimeout(() => {
+      handleAddMiniApp()
+    }, 1000)
+
+    return () => clearTimeout(timer)
   }, [])
 
   // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
