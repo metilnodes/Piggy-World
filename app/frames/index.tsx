@@ -4,7 +4,7 @@ export async function initFrames() {
     if (typeof window === "undefined") return false
 
     // Динамический импорт SDK для избежания ошибок SSR
-    const { sdk } = await import("@farcaster/frame-sdk")
+    const { sdk } = await import("@farcaster/miniapp-sdk")
 
     // Инициализация Frame SDK с отключением нативных жестов
     await sdk.actions.ready({ disableNativeGestures: true })

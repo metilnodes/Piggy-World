@@ -27,15 +27,8 @@ function AuthenticatedApp() {
   useEffect(() => {
     if (!mounted) return
 
-    const handleAddMiniApp = async () => {
+    const tryAddMiniApp = async () => {
       try {
-        const alreadyPrompted = localStorage.getItem("miniAppPrompted")
-        console.log("🔍 AddMiniApp already prompted:", alreadyPrompted)
-
-        if (alreadyPrompted === "true") {
-          return
-        }
-
         // Получаем SDK из глобального объекта window, который устанавливается в frames/index.tsx
         const sdk = (window as any).sdk
         if (!sdk) {
@@ -43,22 +36,21 @@ function AuthenticatedApp() {
           return
         }
 
-        const env = await sdk.device.getEnvironment()
-        console.log("🌍 Farcaster environment:", env)
+        const context = await sdk.context
+        console.log("🔍 SDK Context:", context)
 
-        if (env?.client === "warpcast") {
+        if (!context.client.added) {
+          console.log("ℹ️ Mini App not added yet, prompting...")
           await sdk.actions.addMiniApp()
-          localStorage.setItem("miniAppPrompted", "true")
-          console.log("✅ Mini App prompt triggered")
         } else {
-          console.log("ℹ️ Not in Warpcast, skipping")
+          console.log("✅ Mini App already added or context unavailable")
         }
       } catch (err) {
-        console.error("❌ Error triggering addMiniApp:", err)
+        console.error("❌ Error in tryAddMiniApp:", err)
       }
     }
 
-    const timer = setTimeout(handleAddMiniApp, 1500)
+    const timer = setTimeout(tryAddMiniApp, 1500)
     return () => clearTimeout(timer)
   }, [mounted])
 
