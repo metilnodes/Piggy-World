@@ -27,31 +27,16 @@ function AuthenticatedApp() {
   useEffect(() => {
     if (!mounted) return
 
-    const tryAddMiniApp = async () => {
+    const initFarcaster = async () => {
       try {
-        // Получаем SDK из глобального объекта window, который устанавливается в frames/index.tsx
-        const sdk = (window as any).sdk
-        if (!sdk || typeof sdk.getContext !== "function") {
-          console.log("⚠️ SDK not available or getContext missing")
-          return
-        }
-
-        const context = await sdk.getContext()
-        console.log("🔍 SDK Context:", context)
-
-        if (context?.client?.added === false && context?.client?.type === "warpcast") {
-          console.log("ℹ️ Triggering addMiniApp prompt...")
-          await sdk.actions.addMiniApp()
-          console.log("✅ Prompt shown")
-        } else {
-          console.log("ℹ️ App already added or not in Warpcast")
-        }
+        const { initAndMaybeAddMiniApp } = await import("@/app/frames/index")
+        await initAndMaybeAddMiniApp()
       } catch (err) {
-        console.error("❌ Error in tryAddMiniApp:", err)
+        console.error("❌ Error initializing Farcaster:", err)
       }
     }
 
-    const timer = setTimeout(tryAddMiniApp, 1500)
+    const timer = setTimeout(initFarcaster, 1500)
     return () => clearTimeout(timer)
   }, [mounted])
 
@@ -68,27 +53,6 @@ function AuthenticatedApp() {
 
     return () => clearTimeout(timer)
   }, [mounted, auth.isAuthenticated, auth.error])
-
-  // Инициализация Frame SDK после монтирования
-  useEffect(() => {
-    if (!mounted) return
-
-    const initializeFrames = async () => {
-      try {
-        const { initFrames, isInWarpcast } = await import("@/app/frames/index")
-        const isInFrame = isInWarpcast()
-        console.log("🖼️ Frame context:", { isInFrame })
-
-        if (isInFrame) {
-          await initFrames()
-        }
-      } catch (error) {
-        console.error("Frame initialization error:", error)
-      }
-    }
-
-    initializeFrames()
-  }, [mounted])
 
   const handleRetry = () => {
     console.log("🔄 Retrying authentication...")
