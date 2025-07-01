@@ -38,40 +38,30 @@ function AuthenticatedApp() {
           return
         }
 
-        // Проверяем, находимся ли мы в Farcaster
-        if (typeof window !== "undefined" && window.parent !== window) {
-          // Мы в iframe, проверяем Farcaster SDK
-          const sdk = (window as any).parent?.window?.farcasterSdk || (window as any).farcasterSdk
+        // Проверяем, находимся ли мы в iframe (Farcaster окружение)
+        const isInIframe = window.self !== window.top
+        console.log("🖼️ Is in iframe (Farcaster):", isInIframe)
 
-          if (sdk && sdk.actions && typeof sdk.actions.addMiniApp === "function") {
-            console.log("✅ Farcaster SDK found, calling addMiniApp")
+        if (isInIframe) {
+          console.log("✅ Detected Farcaster iframe, calling addMiniApp via postMessage")
 
-            try {
-              await sdk.actions.addMiniApp()
-              localStorage.setItem("miniAppPrompted", "true")
-              console.log("✅ AddMiniApp successfully called")
-            } catch (addError) {
-              console.error("❌ Error calling addMiniApp:", addError)
-              // Помечаем как выполненное, чтобы не спамить
-              localStorage.setItem("miniAppPrompted", "true")
-            }
-          } else {
-            console.log("ℹ️ Farcaster SDK not available")
+          try {
+            // Используем только postMessage API для безопасной кросс-доменной коммуникации
+            window.parent.postMessage(
+              {
+                type: "fc:frame:add_mini_app",
+                data: {},
+              },
+              "*",
+            )
 
-            // Альтернативный способ через postMessage
-            try {
-              window.parent.postMessage(
-                {
-                  type: "fc:frame:add_mini_app",
-                  data: {},
-                },
-                "*",
-              )
-              localStorage.setItem("miniAppPrompted", "true")
-              console.log("✅ AddMiniApp called via postMessage")
-            } catch (postError) {
-              console.error("❌ Error with postMessage:", postError)
-            }
+            // Помечаем как выполненное
+            localStorage.setItem("miniAppPrompted", "true")
+            console.log("✅ AddMiniApp postMessage sent successfully")
+          } catch (postError) {
+            console.error("❌ Error sending addMiniApp postMessage:", postError)
+            // Все равно помечаем как выполненное, чтобы не спамить
+            localStorage.setItem("miniAppPrompted", "true")
           }
         } else {
           console.log("ℹ️ Not in Farcaster iframe, skipping addMiniApp")
@@ -82,7 +72,7 @@ function AuthenticatedApp() {
     }
 
     // Добавляем задержку для полной инициализации
-    const timer = setTimeout(handleAddMiniApp, 2000)
+    const timer = setTimeout(handleAddMiniApp, 1500)
     return () => clearTimeout(timer)
   }, [mounted])
 
