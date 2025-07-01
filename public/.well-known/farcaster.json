@@ -13,8 +13,15 @@
     "requiredChains": ["eip155:8453"],
     "primaryCategory": "social",
     "subtitle": "Piggy is for the people",
-    "description": "THE FUTURE OF AI & CRYPTO LIVES WITH PIGGY",
+    "description": "THE FUTURE OF AI and CRYPTO LIVES WITH PIGGY",
     "screenshotUrls": ["https://piggyworld.xyz/imageUrl.png"],
     "requiredCapabilities": ["actions.signIn", "wallet.getEthereumProvider"]
   }
+  {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjE3NjY3LCJ0eXBlIjoiYXV0aCIsImtleSI6IjB4Y2FlNkZGZThFZkQxOTdlNmVlOGE2REU1MzM0MUNiZUEzOGEzMWFiRiJ9",
+    "payload": "eyJkb21haW4iOiJwaWdneXdvcmxkLnh5eiJ9",
+    "signature": "3oF/Wo55DJBOSDRdOHWAk4hYTkHTg6fwataIGoRR92s0KBOttVXVc4medaaFS/s17Gemeax0pa3d8CDiyS8yBxw="
+  }
+}
 }
