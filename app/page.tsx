@@ -31,19 +31,20 @@ function AuthenticatedApp() {
       try {
         // Получаем SDK из глобального объекта window, который устанавливается в frames/index.tsx
         const sdk = (window as any).sdk
-        if (!sdk) {
-          console.log("⚠️ SDK not available yet")
+        if (!sdk || typeof sdk.getContext !== "function") {
+          console.log("⚠️ SDK not available or getContext missing")
           return
         }
 
-        const context = await sdk.context
+        const context = await sdk.getContext()
         console.log("🔍 SDK Context:", context)
 
-        if (!context.client.added) {
-          console.log("ℹ️ Mini App not added yet, prompting...")
+        if (context?.client?.added === false && context?.client?.type === "warpcast") {
+          console.log("ℹ️ Triggering addMiniApp prompt...")
           await sdk.actions.addMiniApp()
+          console.log("✅ Prompt shown")
         } else {
-          console.log("✅ Mini App already added or context unavailable")
+          console.log("ℹ️ App already added or not in Warpcast")
         }
       } catch (err) {
         console.error("❌ Error in tryAddMiniApp:", err)
