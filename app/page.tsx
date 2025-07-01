@@ -29,49 +29,35 @@ function AuthenticatedApp() {
 
     const handleAddMiniApp = async () => {
       try {
-        // Проверяем, был ли уже показан промпт
         const alreadyPrompted = localStorage.getItem("miniAppPrompted")
         console.log("🔍 AddMiniApp already prompted:", alreadyPrompted)
 
         if (alreadyPrompted === "true") {
-          console.log("ℹ️ AddMiniApp already prompted, skipping")
           return
         }
 
-        // Проверяем, находимся ли мы в iframe (Farcaster окружение)
-        const isInIframe = window.self !== window.top
-        console.log("🖼️ Is in iframe (Farcaster):", isInIframe)
-
-        if (isInIframe) {
-          console.log("✅ Detected Farcaster iframe, calling addMiniApp via postMessage")
-
-          try {
-            // Используем только postMessage API для безопасной кросс-доменной коммуникации
-            window.parent.postMessage(
-              {
-                type: "fc:frame:add_mini_app",
-                data: {},
-              },
-              "*",
-            )
-
-            // Помечаем как выполненное
-            localStorage.setItem("miniAppPrompted", "true")
-            console.log("✅ AddMiniApp postMessage sent successfully")
-          } catch (postError) {
-            console.error("❌ Error sending addMiniApp postMessage:", postError)
-            // Все равно помечаем как выполненное, чтобы не спамить
-            localStorage.setItem("miniAppPrompted", "true")
-          }
-        } else {
-          console.log("ℹ️ Not in Farcaster iframe, skipping addMiniApp")
+        // Получаем SDK из глобального объекта window, который устанавливается в frames/index.tsx
+        const sdk = (window as any).sdk
+        if (!sdk) {
+          console.log("⚠️ SDK not available yet")
+          return
         }
-      } catch (error) {
-        console.error("❌ Error in handleAddMiniApp:", error)
+
+        const env = await sdk.device.getEnvironment()
+        console.log("🌍 Farcaster environment:", env)
+
+        if (env?.client === "warpcast") {
+          await sdk.actions.addMiniApp()
+          localStorage.setItem("miniAppPrompted", "true")
+          console.log("✅ Mini App prompt triggered")
+        } else {
+          console.log("ℹ️ Not in Warpcast, skipping")
+        }
+      } catch (err) {
+        console.error("❌ Error triggering addMiniApp:", err)
       }
     }
 
-    // Добавляем задержку для полной инициализации
     const timer = setTimeout(handleAddMiniApp, 1500)
     return () => clearTimeout(timer)
   }, [mounted])
