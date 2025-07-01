@@ -23,6 +23,34 @@ function AuthenticatedApp() {
     setMounted(true)
   }, [])
 
+  // Автоматический вызов addMiniApp один раз при первом запуске в Warpcast
+  useEffect(() => {
+    const handleAddMiniApp = async () => {
+      try {
+        const alreadyPrompted = localStorage.getItem("miniAppPrompted")
+
+        if (!alreadyPrompted) {
+          const { initFrames, isInWarpcast } = await import("@/app/frames/index")
+
+          if (isInWarpcast()) {
+            const sdk = await initFrames()
+            if (sdk?.actions?.addMiniApp) {
+              await sdk.actions.addMiniApp()
+              localStorage.setItem("miniAppPrompted", "true")
+              console.log("✅ AddMiniApp prompted.")
+            }
+          } else {
+            console.log("ℹ️ Not in Warpcast, skipping addMiniApp.")
+          }
+        }
+      } catch (err) {
+        console.error("❌ Error detecting Warpcast environment:", err)
+      }
+    }
+
+    handleAddMiniApp()
+  }, [])
+
   // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
   useEffect(() => {
     if (!mounted) return
