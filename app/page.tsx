@@ -23,47 +23,68 @@ function AuthenticatedApp() {
     setMounted(true)
   }, [])
 
-  // Автоматический вызов addMiniApp один раз при первом запуске в Warpcast
+  // Автоматический вызов addMiniApp при первом запуске в Farcaster
   useEffect(() => {
+    if (!mounted) return
+
     const handleAddMiniApp = async () => {
       try {
+        // Проверяем, был ли уже показан промпт
         const alreadyPrompted = localStorage.getItem("miniAppPrompted")
-        console.log("🔍 alreadyPrompted:", alreadyPrompted)
+        console.log("🔍 AddMiniApp already prompted:", alreadyPrompted)
 
-        if (!alreadyPrompted) {
-          const { initFrames, isInWarpcast } = await import("@/app/frames/index")
-          const isInFrame = isInWarpcast()
-          console.log("🖼️ Farcaster environment:", { isInFrame })
+        if (alreadyPrompted === "true") {
+          console.log("ℹ️ AddMiniApp already prompted, skipping")
+          return
+        }
 
-          if (isInFrame) {
-            const sdk = await initFrames()
-            console.log("🔧 SDK:", sdk)
+        // Проверяем, находимся ли мы в Farcaster
+        if (typeof window !== "undefined" && window.parent !== window) {
+          // Мы в iframe, проверяем Farcaster SDK
+          const sdk = (window as any).parent?.window?.farcasterSdk || (window as any).farcasterSdk
 
-            if (sdk?.actions?.addMiniApp) {
+          if (sdk && sdk.actions && typeof sdk.actions.addMiniApp === "function") {
+            console.log("✅ Farcaster SDK found, calling addMiniApp")
+
+            try {
               await sdk.actions.addMiniApp()
               localStorage.setItem("miniAppPrompted", "true")
-              console.log("✅ AddMiniApp prompted.")
-            } else {
-              console.log("⚠️ SDK or addMiniApp not available")
+              console.log("✅ AddMiniApp successfully called")
+            } catch (addError) {
+              console.error("❌ Error calling addMiniApp:", addError)
+              // Помечаем как выполненное, чтобы не спамить
+              localStorage.setItem("miniAppPrompted", "true")
             }
           } else {
-            console.log("ℹ️ Not in Warpcast, skipping addMiniApp.")
+            console.log("ℹ️ Farcaster SDK not available")
+
+            // Альтернативный способ через postMessage
+            try {
+              window.parent.postMessage(
+                {
+                  type: "fc:frame:add_mini_app",
+                  data: {},
+                },
+                "*",
+              )
+              localStorage.setItem("miniAppPrompted", "true")
+              console.log("✅ AddMiniApp called via postMessage")
+            } catch (postError) {
+              console.error("❌ Error with postMessage:", postError)
+            }
           }
         } else {
-          console.log("ℹ️ Already prompted, skipping addMiniApp.")
+          console.log("ℹ️ Not in Farcaster iframe, skipping addMiniApp")
         }
-      } catch (err) {
-        console.error("❌ Error detecting Warpcast environment:", err)
+      } catch (error) {
+        console.error("❌ Error in handleAddMiniApp:", error)
       }
     }
 
-    // Добавляем небольшую задержку для инициализации
-    const timer = setTimeout(() => {
-      handleAddMiniApp()
-    }, 1000)
-
+    // Добавляем задержку для полной инициализации
+    const timer = setTimeout(handleAddMiniApp, 2000)
     return () => clearTimeout(timer)
-  }, [])
+  }, [mounted])
 
   // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
   useEffect(() => {
