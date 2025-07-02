@@ -6,21 +6,21 @@ It’s an interactive experience themed around the Piggy ecosystem, with a bit o
 
 ## There are 8 clickable locations, each opening its own in-app scene with unique logic and visuals:
 
-**Piggy AI** – Info about the chatbot with links
+**Piggy AI** – Learn about the Piggy agent and access helpful links
 
-**Piggy Bank** – A spot dedicated to $PIGGY
+**Piggy Bank** – A dedicated zone for $PIGGY 
 
 **Piggy DAO** – Community governance hub: explore proposals, track treasury stats, and support the mission with donations
 
-**SUPERFORM AREA** – Dedicated Superform space
+**SUPERFORM AREA** – Learn about Superform and explore vaults to earn yield
 
 **Casino** – Mini-games using in-game coins
 
-**PNN** – Piggy News Network
+**PNN** – Piggy News Network, your source for all things Piggy
 
-**Oink-Oink** – Chat area + links to our Discord / Telegram and !tips function for sending in-game coins between users
+**Oink-Oink** – Chat zone with Discord/Telegram links and the `!tips` coin-sending feature
 
-**GAME ZONE** – List of Piggy mini-games
+**GAME ZONE** – Discover and play Piggy-themed mini-games
 
 ---
 📱 **Mini App**: https://farcaster.xyz/miniapps/0P-ysyDsD4fn/piggy-world
