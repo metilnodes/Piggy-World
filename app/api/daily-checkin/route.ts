@@ -22,16 +22,6 @@ function getYesterdayGMTDate(): string {
   return `${year}-${month}-${day}`
 }
 
-// Функция для получения даты N дней назад
-function getDateNDaysAgo(days: number): string {
-  const date = new Date()
-  date.setUTCDate(date.getUTCDate() - days)
-  const year = date.getUTCFullYear()
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0")
-  const day = String(date.getUTCDate()).padStart(2, "0")
-  return `${year}-${month}-${day}`
-}
-
 // Инициализация и проверка схемы таблиц
 async function ensureTablesExist() {
   try {
@@ -87,65 +77,6 @@ async function ensureTablesExist() {
   }
 }
 
-// Функция для расчета текущего streak
-async function calculateCurrentStreak(fid: string): Promise<number> {
-  try {
-    // Получаем все check-ins пользователя, отсортированные по дате (по убыванию)
-    const checkins = await sql`
-      SELECT checkin_date FROM daily_checkins 
-      WHERE fid = ${fid} 
-      ORDER BY checkin_date DESC
-    `
-
-    if (checkins.length === 0) {
-      return 0
-    }
-
-    const today = getCurrentGMTDate()
-    const yesterday = getYesterdayGMTDate()
-
-    let streak = 0
-    let expectedDate = today
-
-    // Проверяем, есть ли check-in сегодня
-    const todayCheckin = checkins.find((c) => c.checkin_date === today)
-    if (todayCheckin) {
-      streak = 1
-      expectedDate = yesterday
-    } else {
-      // Если сегодня нет check-in, начинаем с вчерашнего дня
-      expectedDate = yesterday
-    }
-
-    // Идем по check-ins и считаем consecutive дни
-    for (const checkin of checkins) {
-      const checkinDate = checkin.checkin_date
-
-      // Пропускаем сегодняшний check-in, если уже учли
-      if (checkinDate === today && todayCheckin) {
-        continue
-      }
-
-      if (checkinDate === expectedDate) {
-        streak++
-        // Переходим к предыдущему дню
-        const date = new Date(expectedDate + "T00:00:00Z")
-        date.setUTCDate(date.getUTCDate() - 1)
-        expectedDate = date.toISOString().split("T")[0]
-      } else {
-        // Streak прерван
-        break
-      }
-    }
-
-    console.log(`📊 Calculated streak for ${fid}: ${streak}`)
-    return streak
-  } catch (error) {
-    console.error("❌ Error calculating streak:", error)
-    return 0
-  }
-}
-
 // GET - получить статус daily check-in
 export async function GET(request: NextRequest) {
   try {
@@ -168,38 +99,37 @@ export async function GET(request: NextRequest) {
       WHERE fid = ${fid} AND checkin_date = ${today}
     `
 
+    // Получаем последний check-in для streak
+    const lastCheckin = await sql`
+      SELECT checkin_date, COALESCE(streak, 1) as streak FROM daily_checkins 
+      WHERE fid = ${fid} 
+      ORDER BY checkin_date DESC 
+      LIMIT 1
+    `
+
     // Получаем общее количество check-ins
     const totalCheckins = await sql`
       SELECT COUNT(*) as count FROM daily_checkins 
       WHERE fid = ${fid}
     `
 
-    // Получаем все даты check-ins для календаря
-    const allCheckins = await sql`
-      SELECT checkin_date FROM daily_checkins 
-      WHERE fid = ${fid} 
-      ORDER BY checkin_date DESC
-    `
-
-    // Рассчитываем текущий streak
-    const currentStreak = await calculateCurrentStreak(fid)
-
     const hasCheckedInToday = todayCheckin.length > 0
+    const currentStreak = lastCheckin.length > 0 ? lastCheckin[0].streak || 0 : 0
     const totalCount = totalCheckins[0]?.count || 0
-    const checkinDates = allCheckins.map((c) => c.checkin_date)
+    const lastCheckInDate = lastCheckin.length > 0 ? lastCheckin[0].checkin_date : null
 
     console.log(`📊 Daily check-in status for ${fid}:`, {
       hasCheckedInToday,
       currentStreak,
       totalCount,
-      checkinDates: checkinDates.slice(0, 5), // показываем только первые 5 для логов
+      lastCheckInDate,
     })
 
     return NextResponse.json({
       hasCheckedInToday,
       currentStreak,
       totalCheckins: Number.parseInt(totalCount.toString()),
-      checkinDates,
+      lastCheckInDate,
     })
   } catch (error: any) {
     console.error("❌ Error getting daily check-in status:", error)
@@ -225,6 +155,7 @@ export async function POST(request: NextRequest) {
     await ensureTablesExist()
 
     const today = getCurrentGMTDate()
+    const yesterday = getYesterdayGMTDate()
     const reward = 10
 
     console.log(`📅 Processing check-in for ${username} (${fid}) on ${today}`)
@@ -252,13 +183,31 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // 2. Рассчитываем новый streak
-      const currentStreak = await calculateCurrentStreak(fid)
-      const newStreak = currentStreak + 1
+      // 2. Получаем последний check-in для расчета streak
+      const lastCheckin = await sql`
+        SELECT checkin_date, COALESCE(streak, 0) as streak FROM daily_checkins 
+        WHERE fid = ${fid} 
+        ORDER BY checkin_date DESC 
+        LIMIT 1
+      `
 
-      console.log(`🔥 New streak will be: ${newStreak}`)
+      let newStreak = 1
+      if (lastCheckin.length > 0) {
+        const lastDate = lastCheckin[0].checkin_date
+        const lastStreak = lastCheckin[0].streak || 0
 
-      // 3. Вставляем новый check-in с правильным streak
+        console.log(`📈 Last check-in: ${lastDate}, last streak: ${lastStreak}`)
+
+        // Если последний check-in был вчера, увеличиваем streak
+        if (lastDate === yesterday) {
+          newStreak = lastStreak + 1
+          console.log(`🔥 Streak continued: ${newStreak}`)
+        } else {
+          console.log(`🔄 Streak reset to 1`)
+        }
+      }
+
+      // 3. Вставляем новый check-in с streak и reward
       const checkinResult = await sql`
         INSERT INTO daily_checkins (fid, username, checkin_date, streak, reward, created_at)
         VALUES (${fid}, ${username}, ${today}, ${newStreak}, ${reward}, CURRENT_TIMESTAMP)
@@ -319,6 +268,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         reward: reward,
+        // Убираем newBalance из ответа, чтобы избежать двойного обновления
         streak: newStreak,
         date: today,
         message: `Daily check-in successful! +${reward} OINK (Day ${newStreak})`,
