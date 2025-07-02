@@ -1,51 +1,30 @@
-# Simple Farcaster Mini App
+# 🐽 Piggy World - mini-app in Farcaster
 
-This is a basic Farcaster Mini App that demonstrates user authentication using the Farcaster Auth Kit.
+![Piggy World](https://github.com/metilnodes/metilnodes/blob/main/pics/pwkvadrat.png)
 
-## Prerequisites
+It’s an interactive experience themed around the Piggy ecosystem, with a bit of fun and flavor :pig:
 
-1. Install Node.js from https://nodejs.org/ (LTS version recommended)
-2. After installing Node.js, restart your terminal/computer
+## There are 8 clickable locations, each opening its own in-app scene with unique logic and visuals:
 
-## Setup
+**Piggy AI** – Info about the chatbot with links
 
-1. Install dependencies:
-\`\`\`bash
-npm install
-\`\`\`
+**Piggy Bank** – A spot dedicated to $PIGGY
 
-2. Run the development server:
-\`\`\`bash
-npm run dev
-\`\`\`
+**Piggy DAO** – Community governance hub: explore proposals, track treasury stats, and support the mission with donations
 
-3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**SUPERFORM AREA** – Dedicated Superform space
 
-## Features
+**Casino** – Mini-games using in-game coins
 
-- Farcaster Authentication
-- Simple user greeting
-- Clean, minimal UI with Tailwind CSS
+**PNN** – Piggy News Network
 
-## Project Structure
+**Oink-Oink** – Chat area + links to our Discord / Telegram and !tips function for sending in-game coins between users
 
-- `src/app/page.tsx` - Main application page
-- `src/app/layout.tsx` - Root layout component
-- `src/app/globals.css` - Global styles
+**GAME ZONE** – List of Piggy mini-games
 
-## Deploying to Farcaster
+---
+📱 **Mini App**: https://farcaster.xyz/miniapps/0P-ysyDsD4fn/piggy-world
 
-1. Build the application:
-\`\`\`bash
-npm run build
-\`\`\`
+:globe_with_meridians: **Web version**: https://www.piggyworld.xyz/
 
-2. Deploy the built application to your preferred hosting service (Vercel, Netlify, etc.)
-
-3. Submit your Mini App to Farcaster for review
-
-## Notes
-
-- This is a minimal implementation meant to serve as a starting point
-- Make sure to handle errors appropriately in a production environment
-- Consider adding more features and improving the UI for a better user experience
+Accessible on both mobile and desktop browsers
