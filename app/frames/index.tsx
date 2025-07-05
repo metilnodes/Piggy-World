@@ -3,19 +3,19 @@ export async function initFrames() {
     // Проверяем, что мы в браузере
     if (typeof window === "undefined") return false
 
-    // Динамический импорт нового SDK для избежания ошибок SSR
-    const { sdk } = await import("@farcaster/miniapp-sdk")
+    // Динамический импорт SDK для избежания ошибок SSR
+    const { sdk } = await import("@farcaster/frame-sdk")
 
-    // Инициализация Miniapp SDK с отключением нативных жестов
+    // Инициализация Frame SDK с отключением нативных жестов
     await sdk.actions.ready({ disableNativeGestures: true })
 
     // Делаем SDK доступным глобально для использования в других компонентах
     ;(window as any).sdk = sdk
 
-    console.log("Miniapp SDK initialized successfully and made globally available")
+    console.log("Frame SDK initialized successfully and made globally available")
     return true
   } catch (error) {
-    console.error("Error initializing Miniapp SDK:", error)
+    console.error("Error initializing Frame SDK:", error)
     return false
   }
 }
