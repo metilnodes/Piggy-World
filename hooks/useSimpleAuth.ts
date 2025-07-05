@@ -127,6 +127,54 @@ export function useSimpleAuth() {
     }
   }
 
+  // Функция для выполнения signIn
+  async function trySignIn(): Promise<UserData | null> {
+    try {
+      console.log("🚀 Starting signIn...")
+
+      // Динамический импорт SDK
+      const { sdk } = await import("@farcaster/miniapp-sdk")
+
+      // Инициализируем SDK
+      await sdk.actions.ready()
+      console.log("✅ SDK ready")
+
+      // Выполняем signIn
+      const result = await sdk.actions.signIn()
+
+      if (result) {
+        console.log("✅ signIn result:", result)
+
+        // Используем данные из signIn результата или получаем через API
+        const userData = {
+          fid: result.fid?.toString() || "",
+          username: result.username || `user_${result.fid}`,
+          displayName: result.displayName || result.username || `User ${result.fid}`,
+          pfpUrl: result.pfpUrl || null,
+          bio: result.bio || null,
+          followerCount: 0,
+          followingCount: 0,
+        }
+
+        // Если нужно, дополнительно получаем данные через Neynar
+        if (result.fid) {
+          const neynarData = await fetchUserData(result.fid.toString())
+          if (neynarData) {
+            return neynarData
+          }
+        }
+
+        return userData
+      } else {
+        console.log("⚠️ signIn returned null")
+        return null
+      }
+    } catch (error) {
+      console.error("❌ signIn error:", error)
+      return null
+    }
+  }
+
   async function initAuth() {
     console.log("🚀 Starting authentication...")
     setIsLoading(true)
@@ -148,7 +196,32 @@ export function useSimpleAuth() {
       return
     }
 
-    // 2. Пытаемся получить FID из различных источников
+    // 2. Пытаемся выполнить signIn (только в Warpcast)
+    try {
+      const signInData = await trySignIn()
+      if (signInData) {
+        console.log("✅ signIn successful:", signInData)
+
+        setFid(signInData.fid)
+        setUsername(signInData.username)
+        setDisplayName(signInData.displayName)
+        setPfpUrl(signInData.pfpUrl)
+        setBio(signInData.bio)
+        setFollowerCount(signInData.followerCount)
+        setFollowingCount(signInData.followingCount)
+        setIsAuthenticated(true)
+
+        // Сохраняем в localStorage
+        saveUserData(signInData)
+
+        setIsLoading(false)
+        return
+      }
+    } catch (error) {
+      console.log("⚠️ signIn not available or failed:", error)
+    }
+
+    // 3. Пытаемся получить FID из различных источников
     const urlFid = getFidFromUrl()
     const frameFid = getFrameFid()
     const targetFid = urlFid || frameFid
@@ -177,8 +250,8 @@ export function useSimpleAuth() {
       }
     }
 
-    // 3. Fallback - создаем гостевого пользователя
-    console.log("🏠 No FID found, creating guest user")
+    // 4. Fallback - создаем гостевого пользователя (только если все остальное не сработало)
+    console.log("🏠 No authentication method worked, creating guest user")
     const guestUser = {
       fid: "guest_" + Date.now(),
       username: "guest_user",

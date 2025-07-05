@@ -11,6 +11,9 @@ importers:
       '@farcaster/frame-sdk':
         specifier: latest
         version: 0.1.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
+      '@farcaster/miniapp-sdk':
+        specifier: latest
+        version: 0.1.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.60.0(react@18.0.0))
