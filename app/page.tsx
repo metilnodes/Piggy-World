@@ -23,37 +23,40 @@ function AuthenticatedApp() {
     setMounted(true)
   }, [])
 
-  // Автоматический вызов addMiniApp при первом запуске в Farcaster (только после успешной авторизации)
-  useEffect(() => {
-    if (!mounted || !auth.isAuthenticated) return
-
-    const tryAddMiniApp = async () => {
-      try {
-        const { initAndMaybeAddMiniApp } = await import("@/app/frames/index")
-        await initAndMaybeAddMiniApp()
-      } catch (err) {
-        console.error("❌ Error with addMiniApp:", err)
-      }
-    }
-
-    // Задержка для инициализации после авторизации
-    const timer = setTimeout(tryAddMiniApp, 2000)
-    return () => clearTimeout(timer)
-  }, [mounted, auth.isAuthenticated])
-
-  // Гостевой таймаут - НЕ показываем гостевой доступ до завершения авторизации
+  // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
   useEffect(() => {
     if (!mounted) return
 
     const timer = setTimeout(() => {
-      if (!auth.isAuthenticated && !auth.isLoading) {
-        console.log("🕐 Auth timeout - allowing guest access")
+      if (!auth.isAuthenticated && !auth.error) {
+        console.log("🕐 Guest timeout - allowing guest access")
         setAppEntered(true)
       }
-    }, 15000) // Увеличено до 15 секунд для signIn
+    }, 10000) // Увеличено до 10 секунд
 
     return () => clearTimeout(timer)
-  }, [mounted, auth.isAuthenticated, auth.isLoading])
+  }, [mounted, auth.isAuthenticated, auth.error])
+
+  // Инициализация Frame SDK после монтирования
+  useEffect(() => {
+    if (!mounted) return
+
+    const initializeFrames = async () => {
+      try {
+        const { initFrames, isInWarpcast } = await import("@/app/frames/index")
+        const isInFrame = isInWarpcast()
+        console.log("🖼️ Frame context:", { isInFrame })
+
+        if (isInFrame) {
+          await initFrames()
+        }
+      } catch (error) {
+        console.error("Frame initialization error:", error)
+      }
+    }
+
+    initializeFrames()
+  }, [mounted])
 
   const handleRetry = () => {
     console.log("🔄 Retrying authentication...")
@@ -65,7 +68,7 @@ function AuthenticatedApp() {
     return null
   }
 
-  // Показываем загрузку пока идет процесс авторизации
+  // Показываем загрузку только если не истек таймаут
   if (auth.isLoading && !appEntered) {
     return (
       <main

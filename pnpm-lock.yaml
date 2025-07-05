@@ -10,10 +10,7 @@ importers:
     dependencies:
       '@farcaster/frame-sdk':
         specifier: latest
-        version: 0.1.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
-      '@farcaster/miniapp-sdk':
-        specifier: latest
-        version: 0.1.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
+        version: 0.1.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.60.0(react@18.0.0))
@@ -206,15 +203,15 @@ packages:
   '@date-fns/tz@1.2.0':
     resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
 
-  '@farcaster/frame-sdk@0.1.2':
-    resolution: {integrity: sha512-5dLM492bRIhuoJL/e7Y1O0OOhGJ3AlQ93vIvEgspWGtNsEX+W7yg9f5/yBXM6EOKCxQ+JZhkKhePMP1QwL6ysA==}
+  '@farcaster/frame-sdk@0.1.3':
+    resolution: {integrity: sha512-EdZDNwKkCYIGmfjuelq5pE9vrwK/b2KlAjkzvtalB5pO2p2CZ41vIUNxy1TvlfvpU9FL+G5UtnjQBGuOFJw+FA==}
     engines: {node: '>=22.11.0'}
 
-  '@farcaster/miniapp-core@0.3.2':
-    resolution: {integrity: sha512-gxkQXfp3WeAd03tG5kbtihqkflBofgXy61lzQ55DgI94ROemG6AV8qwyl3uHp4Z6SPSX5QWwbjkOJJI2J0MaYA==}
+  '@farcaster/miniapp-core@0.3.3':
+    resolution: {integrity: sha512-ILHesB2LvQ62qoOeQbs/wpgCqKQb8FGkzHRJ6DZR5F/hkD7vPwNdu/E3d8iYUHFgaXPHQQuq89cr9qkvb0i7bg==}
 
-  '@farcaster/miniapp-sdk@0.1.2':
-    resolution: {integrity: sha512-sBAUqVdzhTUaz7aNNvQh1Jc35j5NOVPlpN19eSC+yh/Ja0hu4xPdoOuV/IgLX5R3prSRSaMqB3qVfhy5TKz87g==}
+  '@farcaster/miniapp-sdk@0.1.3':
+    resolution: {integrity: sha512-FDJz3GZ2uIpdEGWxaV146sIPnYUMHX5K8bEItNFUsuwZuTAY37rEpCg+YKqjcEH99qRDncDz88IXAJWjlNNqng==}
 
   '@farcaster/quick-auth@0.0.6':
     resolution: {integrity: sha512-tiZndhpfDtEhaKlkmS5cVDuS+A/tafqZT3y9I44rC69m3beJok6e8dIH2JhxVy3EvOWTyTBnrmNn6GOOh+qK6A==}
@@ -2104,9 +2101,9 @@ snapshots:
 
   '@date-fns/tz@1.2.0': {}
 
-  '@farcaster/frame-sdk@0.1.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)':
+  '@farcaster/frame-sdk@0.1.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)':
     dependencies:
-      '@farcaster/miniapp-sdk': 0.1.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
+      '@farcaster/miniapp-sdk': 0.1.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@farcaster/quick-auth': 0.0.6(typescript@5.0.2)
       comlink: 4.4.2
       eventemitter3: 5.0.1
@@ -2118,7 +2115,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@farcaster/miniapp-core@0.3.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)':
+  '@farcaster/miniapp-core@0.3.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)':
     dependencies:
       '@solana/web3.js': 1.98.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)
       ox: 0.4.4(typescript@5.0.2)(zod@3.25.67)
@@ -2129,9 +2126,9 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@farcaster/miniapp-sdk@0.1.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)':
+  '@farcaster/miniapp-sdk@0.1.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)':
     dependencies:
-      '@farcaster/miniapp-core': 0.3.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)
+      '@farcaster/miniapp-core': 0.3.3(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)
       '@farcaster/quick-auth': 0.0.6(typescript@5.0.2)
       comlink: 4.4.2
       eventemitter3: 5.0.1
