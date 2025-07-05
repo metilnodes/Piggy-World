@@ -7,7 +7,7 @@ interface BalanceContextType {
   balance: number | null
   isLoading: boolean
   error: string | null
-  // Методы для получения и обновления баланса
+  // Методы для получения и обновления ��аланса
   fetchBalance: () => Promise<void>
   updateBalance: (newValue: number) => Promise<void>
   addToBalance: (amount: number) => Promise<void>

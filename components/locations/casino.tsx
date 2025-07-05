@@ -46,6 +46,7 @@ function DailyOinkModal({
   currentStreak,
   isLoading,
   totalCheckins,
+  streakDates,
   lastCheckInResult,
 }: {
   isOpen: boolean
@@ -55,6 +56,7 @@ function DailyOinkModal({
   currentStreak: number
   isLoading: boolean
   totalCheckins: number
+  streakDates: string[]
   lastCheckInResult?: { success: boolean; message: string; reward?: number } | null
 }) {
   // Auto-close modal after successful check-in
@@ -107,6 +109,19 @@ function DailyOinkModal({
   }
 
   const today = utcDate.getDate()
+
+  // Функция для проверки, является ли день частью streak-а
+  const isDayInStreak = (day: number): boolean => {
+    if (!day || !streakDates || streakDates.length === 0) return false
+
+    const dayString = `${currentYear}-${String(utcDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+    return streakDates.includes(dayString)
+  }
+
+  // Функция для проверки, является ли день сегодняшним и частью streak-а
+  const isTodayInStreak = (day: number): boolean => {
+    return day === today && isDayInStreak(day)
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm">
@@ -189,20 +204,37 @@ function DailyOinkModal({
 
             {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1">
-              {calendarDays.map((day, index) => (
-                <div
-                  key={index}
-                  className={`text-center p-1 text-xs ${
-                    day === null
-                      ? ""
-                      : day === today
-                        ? "bg-[#fd0c96] text-black font-bold rounded"
-                        : "text-white hover:bg-[#fd0c96]/20 rounded"
-                  }`}
-                >
-                  {day}
-                </div>
-              ))}
+              {calendarDays.map((day, index) => {
+                if (day === null) {
+                  return <div key={index} className="text-center p-1 text-xs"></div>
+                }
+
+                const isToday = day === today
+                const isInStreak = isDayInStreak(day)
+                const isTodayStreak = isTodayInStreak(day)
+
+                let className = "text-center p-1 text-xs "
+
+                if (isTodayStreak) {
+                  // Сегодняшний день в streak-е - полная подсветка
+                  className += "bg-[#fd0c96] text-black font-bold rounded"
+                } else if (isInStreak) {
+                  // Другие дни streak-а - полупрозрачная подсветка
+                  className += "bg-[#fd0c96]/40 text-white font-medium rounded"
+                } else if (isToday) {
+                  // Сегодняшний день без streak-а
+                  className += "bg-gray-600 text-white font-bold rounded"
+                } else {
+                  // Обычные дни
+                  className += "text-white hover:bg-[#fd0c96]/20 rounded"
+                }
+
+                return (
+                  <div key={index} className={className}>
+                    {day}
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -239,10 +271,11 @@ export function Casino() {
   const [selectedGame, setSelectedGame] = useState<GameType | null>(null)
   const [showDailyOink, setShowDailyOink] = useState(false)
 
-  // Состояния для Daily Oink (только для streak и totalCheckins)
+  // Состояния для Daily Oink
   const [dailyOinkStatus, setDailyOinkStatus] = useState({
     currentStreak: 0,
     totalCheckins: 0,
+    streakDates: [] as string[],
     isLoading: false,
   })
 
@@ -339,10 +372,11 @@ export function Casino() {
         // Отмечаем как выполненный check-in в localStorage
         markAsCheckedIn()
 
-        // Обновляем состояние
+        // Обновляем состояние с новыми данными streak-а
         setDailyOinkStatus({
           currentStreak: data.streak,
           totalCheckins: dailyOinkStatus.totalCheckins + 1,
+          streakDates: data.streakDates || [],
           isLoading: false,
         })
 
@@ -353,10 +387,7 @@ export function Casino() {
           reward: data.reward,
         })
 
-        // УБИРАЕМ этот вызов - баланс уже обновлен в API
-        // await addToBalance(data.reward)
-
-        // Вместо этого просто обновляем баланс из БД
+        // Обновляем баланс из БД
         await fetchBalance()
 
         console.log("🎉 Check-in completed successfully!")
@@ -378,7 +409,7 @@ export function Casino() {
     }
   }
 
-  // Load daily oink status (только streak и totalCheckins)
+  // Load daily oink status
   useEffect(() => {
     const loadDailyOinkStatus = async () => {
       if (userData && userData.fid) {
@@ -394,6 +425,7 @@ export function Casino() {
             setDailyOinkStatus({
               currentStreak: data.currentStreak,
               totalCheckins: data.totalCheckins,
+              streakDates: data.streakDates || [],
               isLoading: false,
             })
           } else {
@@ -538,6 +570,7 @@ export function Casino() {
         currentStreak={dailyOinkStatus.currentStreak}
         isLoading={dailyOinkStatus.isLoading}
         totalCheckins={dailyOinkStatus.totalCheckins}
+        streakDates={dailyOinkStatus.streakDates}
         lastCheckInResult={lastCheckInResult}
       />
     </div>
