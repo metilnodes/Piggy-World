@@ -18,17 +18,16 @@ export async function GET() {
         <meta property="fc:frame:button:1" content="Open Piggy World" />
         <meta property="fc:frame:button:1:action" content="post_redirect" />
         <meta property="fc:frame:button:1:target" content="${BASE_URL}" />
-        
+
         <meta property="fc:frame:embed" content='{
-          "appId": "0197c693-6369-5ad3-dd98-effee2596d7a",
+          "appId": "0P-ysyDsD4fn",
           "url": "${BASE_URL}",
           "version": "vNext"
         }' />
       </head>
       <body>
         <h1>OINK World Frame</h1>
-        <p>You're being redirected...</p>
-        <script>window.location.href = "${BASE_URL}"</script>
+        <p>You're being redirected... or click the button above 👆</p>
       </body>
     </html>
   `
@@ -38,32 +37,4 @@ export async function GET() {
       "Content-Type": "text/html",
     },
   })
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    const data = await req.json()
-    const { untrustedData } = data
-    const { fid, buttonIndex = 0 } = untrustedData || {}
-
-    // Когда пользователь нажал кнопку внутри Farcaster превью
-    if (buttonIndex === 1) {
-      return NextResponse.json({
-        type: "frame",
-        frameUrl: `${BASE_URL}/?fid=${fid || ""}`,
-      })
-    }
-
-    // По умолчанию возвращаем редирект на корень
-    return NextResponse.json({
-      type: "frame",
-      frameUrl: BASE_URL,
-    })
-  } catch (error) {
-    console.error("Frame error:", error)
-    return NextResponse.json({
-      type: "frame",
-      frameUrl: BASE_URL,
-    })
-  }
 }
