@@ -13,72 +13,6 @@ interface QuickAuthResult {
   error: string | null
 }
 
-// Функция для создания гостевого пользователя
-function createGuestUser() {
-  const guestId = Math.floor(Math.random() * 10000).toString()
-  return {
-    fid: `guest_${guestId}`,
-    username: `guest${guestId}`,
-    displayName: `Guest User ${guestId}`,
-    pfp: null,
-    token: null,
-  }
-}
-
-// Функция для сохранения данных в localStorage
-const saveUserData = (userData: {
-  fid: string
-  username: string
-  displayName: string
-  pfp: string | null
-  token?: string
-}) => {
-  try {
-    localStorage.setItem("farcasterUser", JSON.stringify(userData))
-    localStorage.setItem("fc_fid", userData.fid)
-    localStorage.setItem("fc_username", userData.username)
-    localStorage.setItem("fc_display_name", userData.displayName)
-    localStorage.setItem("fc_pfp_url", userData.pfp || "")
-    if (userData.token) {
-      localStorage.setItem("fc_token", userData.token)
-    }
-    console.log("💾 User data saved to localStorage:", userData)
-  } catch (error) {
-    console.error("❌ Error saving user data:", error)
-  }
-}
-
-// Функция для загрузки данных из localStorage
-const loadUserDataFromStorage = (): {
-  fid: string
-  username: string
-  displayName: string
-  pfp: string | null
-  token?: string
-} | null => {
-  try {
-    const savedUser = localStorage.getItem("farcasterUser")
-    if (!savedUser) return null
-
-    const userData = JSON.parse(savedUser)
-
-    if (userData.fid && userData.username) {
-      return {
-        fid: userData.fid,
-        username: userData.username,
-        displayName: userData.displayName || userData.username,
-        pfp: userData.pfp,
-        token: userData.token,
-      }
-    }
-
-    return null
-  } catch (error) {
-    console.error("❌ Error loading user data from storage:", error)
-    return null
-  }
-}
-
 export function useQuickAuth(): QuickAuthResult {
   const [fid, setFid] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
@@ -91,17 +25,17 @@ export function useQuickAuth(): QuickAuthResult {
   useEffect(() => {
     const run = async () => {
       try {
-        console.log("🚀 Starting QuickAuth...")
+        console.log("🚀 Starting signIn...")
 
         // Инициализируем SDK
         await sdk.actions.ready()
         console.log("✅ SDK ready")
 
-        // Выполняем QuickAuth
-        const result = await sdk.actions.quickAuth()
+        // Выполняем signIn (правильный метод вместо quickAuth)
+        const result = await sdk.actions.signIn()
 
         if (result && result.fid) {
-          console.log("✅ QuickAuth result:", result)
+          console.log("✅ signIn result:", result)
 
           // Устанавливаем данные пользователя
           setFid(result.fid.toString())
@@ -110,14 +44,14 @@ export function useQuickAuth(): QuickAuthResult {
           setPfpUrl(result.pfpUrl || null)
           setIsAuthenticated(true)
 
-          console.log("✅ User authenticated via QuickAuth")
+          console.log("✅ User authenticated via signIn")
         } else {
-          console.log("⚠️ QuickAuth returned null, staying guest")
+          console.log("⚠️ signIn returned null, staying guest")
           setIsAuthenticated(false)
         }
       } catch (err: any) {
-        console.error("❌ QuickAuth error:", err)
-        setError(err.message || "QuickAuth failed")
+        console.error("❌ signIn error:", err)
+        setError(err.message || "signIn failed")
         setIsAuthenticated(false)
       } finally {
         setIsLoading(false)
