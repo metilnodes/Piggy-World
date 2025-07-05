@@ -1,87 +1,103 @@
-export async function initFrames() {
-  try {
-    // Проверяем, что мы в браузере
-    if (typeof window === "undefined") return false
+"use client"
 
-    // Динамический импорт SDK для избежания ошибок SSR
-    const { sdk } = await import("@farcaster/miniapp-sdk")
+import { sdk } from "@farcaster/miniapp-sdk"
 
-    // Инициализация Frame SDK с отключением нативных жестов
-    await sdk.actions.ready({ disableNativeGestures: true })
-
-    // Делаем SDK доступным глобально для использования в других компонентах
-    ;(window as any).sdk = sdk
-
-    console.log("Frame SDK initialized successfully and made globally available")
-    return true
-  } catch (error) {
-    console.error("Error initializing Frame SDK:", error)
-    return false
-  }
-}
-
-// Функция для определения, открыто ли приложение в Warpcast/Farcaster
+// Функция для проверки, находимся ли мы в Warpcast
 export function isInWarpcast(): boolean {
-  try {
-    if (typeof window === "undefined") return false
+  if (typeof window === "undefined") return false
 
-    // Проверяем мета-тег fc:frame
-    const hasFrameMetaTag = !!document.querySelector('meta[name="fc:frame"]')
+  const userAgent = navigator.userAgent.toLowerCase()
+  const isWarpcastUA = userAgent.includes("warpcast") || userAgent.includes("farcaster")
+  const isFramed = window.parent !== window
+  const referrerCheck = document.referrer.includes("warpcast") || document.referrer.includes("farcaster")
 
-    // Дополнительные проверки
-    const userAgent = navigator.userAgent.toLowerCase()
-    const isWarpcastUA = userAgent.includes("warpcast") || userAgent.includes("farcaster")
-    const isFramed = window.parent !== window
-    const referrerCheck = document.referrer.includes("warpcast") || document.referrer.includes("farcaster")
-
-    return hasFrameMetaTag || isWarpcastUA || isFramed || referrerCheck
-  } catch (error) {
-    console.error("Error checking if in Warpcast:", error)
-    return false
-  }
+  return isWarpcastUA || isFramed || referrerCheck
 }
 
-// Новая функция, которая объединяет инициализацию SDK и проверку/добавление Mini App
-export async function initAndMaybeAddMiniApp() {
+// Функция для инициализации Frame SDK
+export async function initFrames(): Promise<void> {
   try {
-    // Проверяем, находимся ли мы в Warpcast
-    const isInFrame = isInWarpcast()
-    console.log("🖼️ Frame context:", { isInFrame })
-
-    if (!isInFrame) {
-      console.log("ℹ️ Not in Warpcast, skipping SDK initialization")
-      return false
-    }
+    console.log("🚀 Initializing Frame SDK...")
 
     // Инициализируем SDK
-    const ok = await initFrames()
-    if (!ok) {
-      console.log("⚠️ Failed to initialize SDK")
-      return false
+    await sdk.actions.ready()
+
+    // Сохраняем SDK в глобальном объекте для доступа из других частей приложения
+    ;(window as any).sdk = sdk
+
+    console.log("✅ Frame SDK initialized successfully and made globally available")
+  } catch (error) {
+    console.error("❌ Failed to initialize Frame SDK:", error)
+    throw error
+  }
+}
+
+// Функция для выполнения QuickAuth
+export async function performQuickAuth(): Promise<{
+  success: boolean
+  fid?: string
+  token?: string
+  error?: string
+}> {
+  try {
+    console.log("🔐 Performing QuickAuth...")
+
+    // Убеждаемся, что SDK инициализирован
+    await sdk.actions.ready()
+
+    // Выполняем QuickAuth
+    const result = await sdk.actions.quickAuth()
+
+    if (result && result.token) {
+      console.log("✅ QuickAuth successful")
+      return {
+        success: true,
+        fid: result.fid?.toString(),
+        token: result.token,
+      }
+    } else {
+      console.log("⚠️ QuickAuth returned no result")
+      return {
+        success: false,
+        error: "No authentication result",
+      }
+    }
+  } catch (error: any) {
+    console.error("❌ QuickAuth failed:", error)
+    return {
+      success: false,
+      error: error.message || "QuickAuth failed",
+    }
+  }
+}
+
+// Комбинированная функция для инициализации и добавления Mini App
+export async function initAndMaybeAddMiniApp(): Promise<void> {
+  try {
+    // Проверяем, находимся ли мы в Warpcast
+    if (!isInWarpcast()) {
+      console.log("ℹ️ Not in Warpcast, skipping Frame SDK initialization")
+      return
     }
 
-    // Получаем SDK из глобального объекта
-    const sdk = (window as any).sdk
-    if (!sdk || typeof sdk.getContext !== "function") {
-      console.log("⚠️ SDK not available or getContext missing")
-      return false
-    }
+    console.log("🚀 Initializing Farcaster SDK and checking for addMiniApp...")
 
-    // Получаем контекст и проверяем, добавлено ли приложение
+    // Инициализируем SDK
+    await initFrames()
+
+    // Получаем контекст
     const context = await sdk.getContext()
     console.log("🔍 SDK Context:", context)
 
+    // Проверяем, нужно ли добавить Mini App
     if (context?.client?.added === false && context?.client?.type === "warpcast") {
-      console.log("ℹ️ Triggering addMiniApp prompt...")
+      console.log("ℹ️ Mini App not added yet, prompting...")
       await sdk.actions.addMiniApp()
-      console.log("✅ Prompt shown")
-      return true
+      console.log("✅ Mini App prompt triggered")
     } else {
-      console.log("ℹ️ App already added or not in Warpcast")
-      return false
+      console.log("ℹ️ Mini App already added or context unavailable")
     }
-  } catch (error) {
-    console.error("❌ Error in initAndMaybeAddMiniApp:", error)
-    return false
+  } catch (err: any) {
+    console.error("❌ Error in initAndMaybeAddMiniApp:", err)
   }
 }
