@@ -23,23 +23,6 @@ function AuthenticatedApp() {
     setMounted(true)
   }, [])
 
-  // Автоматический вызов addMiniApp при первом запуске в Farcaster
-  useEffect(() => {
-    if (!mounted) return
-
-    const initFarcaster = async () => {
-      try {
-        const { initAndMaybeAddMiniApp } = await import("@/app/frames/index")
-        await initAndMaybeAddMiniApp()
-      } catch (err) {
-        console.error("❌ Error initializing Farcaster:", err)
-      }
-    }
-
-    const timer = setTimeout(initFarcaster, 1500)
-    return () => clearTimeout(timer)
-  }, [mounted])
-
   // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
   useEffect(() => {
     if (!mounted) return
@@ -53,6 +36,27 @@ function AuthenticatedApp() {
 
     return () => clearTimeout(timer)
   }, [mounted, auth.isAuthenticated, auth.error])
+
+  // Инициализация Frame SDK после монтирования
+  useEffect(() => {
+    if (!mounted) return
+
+    const initializeFrames = async () => {
+      try {
+        const { initFrames, isInWarpcast } = await import("@/app/frames/index")
+        const isInFrame = isInWarpcast()
+        console.log("🖼️ Frame context:", { isInFrame })
+
+        if (isInFrame) {
+          await initFrames()
+        }
+      } catch (error) {
+        console.error("Frame initialization error:", error)
+      }
+    }
+
+    initializeFrames()
+  }, [mounted])
 
   const handleRetry = () => {
     console.log("🔄 Retrying authentication...")

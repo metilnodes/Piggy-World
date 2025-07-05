@@ -11,12 +11,9 @@ importers:
       '@farcaster/frame-sdk':
         specifier: latest
         version: 0.1.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
-      '@farcaster/miniapp-sdk':
-        specifier: latest
-        version: 0.1.2(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@hookform/resolvers':
         specifier: ^3.9.1
-        version: 3.9.1(react-hook-form@7.59.0(react@18.0.0))
+        version: 3.9.1(react-hook-form@7.60.0(react@18.0.0))
       '@neondatabase/serverless':
         specifier: latest
         version: 1.0.1
@@ -121,7 +118,7 @@ importers:
         version: 8.6.0(react@18.0.0)
       ethers:
         specifier: latest
-        version: 6.14.4(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        version: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       input-otp:
         specifier: latest
         version: 1.4.2(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
@@ -139,13 +136,13 @@ importers:
         version: 18.0.0
       react-day-picker:
         specifier: latest
-        version: 9.7.0(react@18.0.0)
+        version: 9.8.0(react@18.0.0)
       react-dom:
         specifier: ^18
         version: 18.0.0(react@18.0.0)
       react-hook-form:
         specifier: latest
-        version: 7.59.0(react@18.0.0)
+        version: 7.60.0(react@18.0.0)
       react-resizable-panels:
         specifier: latest
         version: 3.0.3(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
@@ -154,7 +151,7 @@ importers:
         version: 3.0.2(@types/react@18.0.0)(react-dom@18.0.0(react@18.0.0))(react-is@18.3.1)(react@18.0.0)(redux@5.0.1)
       sonner:
         specifier: latest
-        version: 2.0.5(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
+        version: 2.0.6(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.5.5
@@ -1373,8 +1370,8 @@ packages:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
     engines: {node: '>=6'}
 
-  ethers@6.14.4:
-    resolution: {integrity: sha512-Jm/dzRs2Z9iBrT6e9TvGxyb5YVKAPLlpna7hjxH7KH/++DSh2T/JVmQUv7iHI5E55hDbp/gEVvstWYXVxXFzsA==}
+  ethers@6.15.0:
+    resolution: {integrity: sha512-Kf/3ZW54L4UT0pZtsY/rf+EkBU7Qi5nnhonjUb8yTXcxH3cdcWrV2cRyk0Xk/4jK6OoHhxxZHriyhje20If2hQ==}
     engines: {node: '>=14.0.0'}
 
   eventemitter3@5.0.1:
@@ -1722,8 +1719,8 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  react-day-picker@9.7.0:
-    resolution: {integrity: sha512-urlK4C9XJZVpQ81tmVgd2O7lZ0VQldZeHzNejbwLWZSkzHH498KnArT0EHNfKBOWwKc935iMLGZdxXPRISzUxQ==}
+  react-day-picker@9.8.0:
+    resolution: {integrity: sha512-E0yhhg7R+pdgbl/2toTb0xBhsEAtmAx1l7qjIWYfcxOy8w4rTSVfbtBoSzVVhPwKP/5E9iL38LivzoE3AQDhCQ==}
     engines: {node: '>=18'}
     peerDependencies:
       react: '>=16.8.0'
@@ -1733,8 +1730,8 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-  react-hook-form@7.59.0:
-    resolution: {integrity: sha512-kmkek2/8grqarTJExFNjy+RXDIP8yM+QTl3QL6m6Q8b2bih4ltmiXxH7T9n+yXNK477xPh5yZT/6vD8sYGzJTA==}
+  react-hook-form@7.60.0:
+    resolution: {integrity: sha512-SBrYOvMbDB7cV8ZfNpaiLcgjH/a1c7aK0lK+aNigpf4xWLO8q+o4tcvVurv3c4EOyzn/3dCsYt4GKD42VvJ/+A==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -1853,8 +1850,8 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
 
-  sonner@2.0.5:
-    resolution: {integrity: sha512-YwbHQO6cSso3HBXlbCkgrgzDNIhws14r4MO87Ofy+cV2X7ES4pOoAK3+veSmVTvqNx1BWUxlhPmZzP00Crk2aQ==}
+  sonner@2.0.6:
+    resolution: {integrity: sha512-yHFhk8T/DK3YxjFQXIrcHT1rGEeTLliVzWbO0xN8GberVun2RiBnxAjXAYpZrqwEVHBG9asI/Li8TAAhN9m59Q==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
       react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
@@ -2166,9 +2163,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@hookform/resolvers@3.9.1(react-hook-form@7.59.0(react@18.0.0))':
+  '@hookform/resolvers@3.9.1(react-hook-form@7.60.0(react@18.0.0))':
     dependencies:
-      react-hook-form: 7.59.0(react@18.0.0)
+      react-hook-form: 7.60.0(react@18.0.0)
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -3329,7 +3326,7 @@ snapshots:
 
   escalade@3.2.0: {}
 
-  ethers@6.14.4(bufferutil@4.0.9)(utf-8-validate@5.0.10):
+  ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       '@adraffy/ens-normalize': 1.10.1
       '@noble/curves': 1.2.0
@@ -3670,7 +3667,7 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react-day-picker@9.7.0(react@18.0.0):
+  react-day-picker@9.8.0(react@18.0.0):
     dependencies:
       '@date-fns/tz': 1.2.0
       date-fns: 4.1.0
@@ -3683,7 +3680,7 @@ snapshots:
       react: 18.0.0
       scheduler: 0.21.0
 
-  react-hook-form@7.59.0(react@18.0.0):
+  react-hook-form@7.60.0(react@18.0.0):
     dependencies:
       react: 18.0.0
 
@@ -3809,7 +3806,7 @@ snapshots:
 
   signal-exit@4.1.0: {}
 
-  sonner@2.0.5(react-dom@18.0.0(react@18.0.0))(react@18.0.0):
+  sonner@2.0.6(react-dom@18.0.0(react@18.0.0))(react@18.0.0):
     dependencies:
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
