@@ -44,12 +44,11 @@ export function OinkOink() {
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [dbConnectionFailed, setDbConnectionFailed] = useState(false)
-  const [isPolling, setIsPolling] = useState(isPolling)
+  const [isPolling, setIsPolling] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState<Date | null>(null)
   const [currentUser, setCurrentUser] = useState<any | null>(null)
   const [optimisticMessageId, setOptimisticMessageId] = useState(0)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   // Рефы для интервалов
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -166,7 +165,7 @@ export function OinkOink() {
           .catch((error) => console.error("❌ Error polling messages:", error))
           .finally(() => setIsPolling(false))
       }
-    }, 5000)
+    }, 2000)
 
     // Polling баланса каждые 5 секунд
     balanceIntervalRef.current = setInterval(() => {
@@ -309,8 +308,6 @@ export function OinkOink() {
     const isTipsCommand = messageText.toLowerCase().startsWith("!tips")
 
     setInputMessage("") // Очищаем поле сразу
-    inputRef.current?.focus()
-
     setIsSending(true)
 
     try {
@@ -727,7 +724,6 @@ export function OinkOink() {
           className="flex-1 px-3 py-2 bg-black border border-[#fd0c96] rounded-md focus:outline-none focus:ring-2 focus:ring-[#fd0c96] text-white"
           placeholder="Type here..."
           disabled={isSending}
-          ref={inputRef}
         />
         <button onClick={sendMessage} className="neon-button p-2" disabled={!inputMessage.trim() || isSending}>
           <Send size={20} />

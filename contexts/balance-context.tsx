@@ -192,7 +192,7 @@ export function BalanceProvider({ children }: { children: React.ReactNode }) {
       } catch (e: any) {
         console.error("❌ BalanceContext addToBalance error:", e)
         setError(e.message || "Failed to add to balance")
-        await fetchBalance() // Восстанавливаем актуальный баланс
+        await fetchBalance() // Восстанавливае�� актуальный баланс
       } finally {
         setIsLoading(false)
       }

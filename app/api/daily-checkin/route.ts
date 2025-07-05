@@ -118,11 +118,23 @@ export async function GET(request: NextRequest) {
     const totalCount = totalCheckins[0]?.count || 0
     const lastCheckInDate = lastCheckin.length > 0 ? lastCheckin[0].checkin_date : null
 
+    // Получаем все даты текущего streak для подсветки в календаре
+    const streakDates: string[] = []
+    if (currentStreak > 0 && lastCheckInDate) {
+      const endDate = new Date(lastCheckInDate)
+      for (let i = 0; i < currentStreak; i++) {
+        const date = new Date(endDate)
+        date.setDate(date.getDate() - i)
+        streakDates.push(date.toISOString().split("T")[0])
+      }
+    }
+
     console.log(`📊 Daily check-in status for ${fid}:`, {
       hasCheckedInToday,
       currentStreak,
       totalCount,
       lastCheckInDate,
+      streakDates,
     })
 
     return NextResponse.json({
@@ -130,6 +142,7 @@ export async function GET(request: NextRequest) {
       currentStreak,
       totalCheckins: Number.parseInt(totalCount.toString()),
       lastCheckInDate,
+      streakDates, // Добавляем массив дат для подсветки
     })
   } catch (error: any) {
     console.error("❌ Error getting daily check-in status:", error)
@@ -197,14 +210,25 @@ export async function POST(request: NextRequest) {
         const lastStreak = lastCheckin[0].streak || 0
 
         console.log(`📈 Last check-in: ${lastDate}, last streak: ${lastStreak}`)
+        console.log(`📅 Yesterday: ${yesterday}, Today: ${today}`)
+
+        // Преобразуем даты в строки для корректного сравнения
+        const lastDateStr = new Date(lastDate).toISOString().split("T")[0]
 
         // Если последний check-in был вчера, увеличиваем streak
-        if (lastDate === yesterday) {
+        if (lastDateStr === yesterday) {
           newStreak = lastStreak + 1
           console.log(`🔥 Streak continued: ${newStreak}`)
+        } else if (lastDateStr === today) {
+          // Это не должно происходить, так как мы уже проверили выше
+          console.log(`⚠️ Already checked in today - this shouldn't happen`)
+          newStreak = lastStreak
         } else {
-          console.log(`🔄 Streak reset to 1`)
+          console.log(`🔄 Streak reset to 1 (gap between ${lastDateStr} and ${today})`)
+          newStreak = 1
         }
+      } else {
+        console.log(`🆕 First check-in ever`)
       }
 
       // 3. Вставляем новый check-in с streak и reward
