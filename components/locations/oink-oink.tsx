@@ -44,7 +44,7 @@ export function OinkOink() {
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [dbConnectionFailed, setDbConnectionFailed] = useState(false)
-  const [isPolling, setIsPolling] = useState(isPolling)
+  const [isPolling, setIsPolling] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState<Date | null>(null)
   const [currentUser, setCurrentUser] = useState<any | null>(null)
