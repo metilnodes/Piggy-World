@@ -311,28 +311,7 @@ export function OinkOink() {
     const isTipsCommand = messageText.toLowerCase().startsWith("!tips")
 
     setIsSending(true)
-
-    const message = {
-      id: `${Date.now()}`,
-      text: inputMessage,
-      sender: {
-        fid: currentUser.fid ?? 0,
-        username: currentUser.username ?? "guest",
-        pfp: currentUser.pfp ?? "",
-      },
-      optimistic: true,
-    }
-
-    // Обновляем UI сразу (оптимистично)
-    setMessages((prev) => [...prev, message])
-
-    // Очищаем инпут
     setInputMessage("")
-
-    // Надежно возвращаем фокус после следующего рендера
-    requestAnimationFrame(() => {
-      inputRef.current?.focus()
-    })
 
     try {
       if (isTipsCommand) {
@@ -340,11 +319,9 @@ export function OinkOink() {
         return
       }
 
-      // Добавляем оптимистичное сообщение
+      // Только для обычных сообщений добавляем optimistic message
       const optimisticId = addOptimisticMessage(messageText, false)
-      if (!optimisticId) {
-        throw new Error("Failed to create optimistic message")
-      }
+      if (!optimisticId) throw new Error("Failed to create optimistic message")
 
       const response = await fetch("/api/chat/messages", {
         method: "POST",
@@ -363,7 +340,6 @@ export function OinkOink() {
       if (response.ok) {
         // Удаляем оптимистичное сообщение
         removeOptimisticMessage(optimisticId)
-
         // Принудительно обновляем сообщения через короткое время
         setTimeout(() => {
           fetchMessages(false)
@@ -601,6 +577,13 @@ export function OinkOink() {
     document.addEventListener("visibilitychange", handleVisibilityChange)
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
   }, [])
+
+  // Автоматическое восстановление фокуса после отправки
+  useEffect(() => {
+    if (!isSending && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isSending])
 
   if (!currentUser) {
     return (
