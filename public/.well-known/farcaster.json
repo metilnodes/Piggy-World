@@ -6,7 +6,6 @@
     "homeUrl": "https://piggyworld.xyz",
     "imageUrl": "https://piggyworld.xyz/imageUrl.png",
     "heroImageUrl": "https://piggyworld.xyz/imageUrl.png",
-    "ogImageUrl": "https://piggyworld.xyz/imageUrl.png",
     "buttonTitle": "Join Piggy World",
     "splashImageUrl": "https://piggyworld.xyz/icon.png",
     "splashBackgroundColor": "#000000",
@@ -21,5 +20,15 @@
     "header": "eyJmaWQiOjE3NjY3LCJ0eXBlIjoiYXV0aCIsImtleSI6IjB4Y2FlNkZGZThFZkQxOTdlNmVlOGE2REU1MzM0MUNiZUEzOGEzMWFiRiJ9",
     "payload": "eyJkb21haW4iOiJwaWdneXdvcmxkLnh5eiJ9",
     "signature": "3oF/Wo55DJBOSDRdOHWAk4hYTkHTg6fwataIGoRR92s0KBOttVXVc4medaaFS/s17Gemeax0pa3d8CDiyS8yBxw="
-  }
+  },
+  "miniApps": [
+    {
+      "appId": "0197c693-6369-5ad3-dd98-effee2596d7a",
+      "name": "Piggy World",
+      "description": "Enter the ultimate pig-themed adventure",
+      "icon": "https://piggyworld.xyz/icon.png",
+      "url": "https://piggyworld.xyz",
+      "version": "vNext"
+    }
+  ]
 }

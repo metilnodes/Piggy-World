@@ -5,6 +5,7 @@ import { WorldMap } from "@/components/world-map"
 import { useSimpleAuth } from "@/hooks/useSimpleAuth"
 import { useState, useEffect } from "react"
 import { AuthStatus } from "@/components/auth-status"
+import Head from "next/head"
 
 // Импорты дебагеров - только если нужны для разработки
 import { SimpleAuthDebug } from "@/components/simple-auth-debug"
@@ -170,9 +171,34 @@ function AuthenticatedApp() {
 }
 
 export default function Home() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://piggyworld.xyz"
+
   return (
-    <AppProvider>
-      <AuthenticatedApp />
-    </AppProvider>
+    <>
+      <Head>
+        <title>Piggy World - Enter the OINK Universe</title>
+        <meta name="description" content="Join the ultimate pig-themed adventure in Piggy World" />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="Piggy World" />
+        <meta property="og:description" content="Enter the world of Piggy" />
+        <meta property="og:image" content={`${baseUrl}/og-image.png`} />
+
+        {/* Farcaster Frame */}
+        <meta property="fc:frame" content="vNext" />
+        <meta property="fc:frame:image" content={`${baseUrl}/og-image.png`} />
+        <meta property="fc:frame:button:1" content="Open Piggy World" />
+        <meta property="fc:frame:button:1:action" content="post_redirect" />
+        <meta property="fc:frame:button:1:target" content={baseUrl} />
+        <meta
+          property="fc:frame:embed"
+          content={`{"appId":"0197c693-6369-5ad3-dd98-effee2596d7a","url":"${baseUrl}","version":"vNext"}`}
+        />
+      </Head>
+
+      <AppProvider>
+        <AuthenticatedApp />
+      </AppProvider>
+    </>
   )
 }
