@@ -41,7 +41,7 @@ function AuthenticatedApp() {
     return () => clearTimeout(timer)
   }, [mounted, auth.isAuthenticated])
 
-  // Гостевой таймаут - НЕ показываем гостевой доступ до завершения авторизации
+  // Гостевой таймаут - НЕ показываем гостевой доступ до завершения QuickAuth
   useEffect(() => {
     if (!mounted) return
 
@@ -50,7 +50,7 @@ function AuthenticatedApp() {
         console.log("🕐 Auth timeout - allowing guest access")
         setAppEntered(true)
       }
-    }, 15000) // Увеличено до 15 секунд для signIn
+    }, 15000) // Увеличено до 15 секунд для QuickAuth
 
     return () => clearTimeout(timer)
   }, [mounted, auth.isAuthenticated, auth.isLoading])

@@ -2,12 +2,17 @@
 
 import { useState, useEffect } from "react"
 
-interface QuickAuthResult {
-  token: string | null
-  fid: string | null
-  username: string | null
-  displayName: string | null
+interface UserData {
+  fid: string
+  username: string
+  displayName: string
   pfpUrl: string | null
+  bio: string | null
+  followerCount: number
+  followingCount: number
+}
+
+interface QuickAuthResult extends UserData {
   isLoading: boolean
   error: string | null
   isAuthenticated: boolean
@@ -16,81 +21,75 @@ interface QuickAuthResult {
 }
 
 // Функция для создания гостевого пользователя
-function createGuestUser() {
+function createGuestUser(): UserData {
   const guestId = Math.floor(Math.random() * 10000).toString()
   return {
     fid: `guest_${guestId}`,
     username: `guest${guestId}`,
     displayName: `Guest User ${guestId}`,
-    pfp: null,
-    token: null,
+    pfpUrl: null,
+    bio: null,
+    followerCount: 0,
+    followingCount: 0,
+  }
+}
+
+// Функция для сохранения данных в localStorage
+const saveUserData = (userData: UserData) => {
+  try {
+    localStorage.setItem("farcasterUser", JSON.stringify(userData))
+    localStorage.setItem("fc_fid", userData.fid)
+    localStorage.setItem("fc_username", userData.username)
+    localStorage.setItem("fc_display_name", userData.displayName)
+    localStorage.setItem("fc_pfp_url", userData.pfpUrl || "")
+    localStorage.setItem("fc_bio", userData.bio || "")
+    localStorage.setItem("fc_follower_count", userData.followerCount.toString())
+    localStorage.setItem("fc_following_count", userData.followingCount.toString())
+    console.log("💾 User data saved to localStorage:", userData)
+  } catch (error) {
+    console.error("❌ Error saving user data:", error)
+  }
+}
+
+// Функция для загрузки данных из localStorage
+const loadUserDataFromStorage = (): UserData | null => {
+  try {
+    const savedUser = localStorage.getItem("farcasterUser")
+    if (!savedUser) return null
+
+    const userData = JSON.parse(savedUser)
+
+    if (userData.fid && userData.username) {
+      return {
+        fid: userData.fid,
+        username: userData.username,
+        displayName: userData.displayName || userData.username,
+        pfpUrl: userData.pfpUrl,
+        bio: userData.bio,
+        followerCount: userData.followerCount || 0,
+        followingCount: userData.followingCount || 0,
+      }
+    }
+
+    return null
+  } catch (error) {
+    console.error("❌ Error loading user data from storage:", error)
+    return null
   }
 }
 
 export function useQuickAuth(): QuickAuthResult {
-  const [token, setToken] = useState<string | null>(null)
   const [fid, setFid] = useState<string | null>(null)
-  const [username, setUsername] = useState<string | null>(null)
-  const [displayName, setDisplayName] = useState<string | null>(null)
+  const [username, setUsername] = useState<string>("")
+  const [displayName, setDisplayName] = useState<string>("")
   const [pfpUrl, setPfpUrl] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [bio, setBio] = useState<string | null>(null)
+  const [followerCount, setFollowerCount] = useState<number>(0)
+  const [followingCount, setFollowingCount] = useState<number>(0)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  // Функция для сохранения данных в localStorage
-  const saveUserData = (userData: {
-    fid: string
-    username: string
-    displayName: string
-    pfp: string | null
-    token?: string
-  }) => {
-    try {
-      localStorage.setItem("farcasterUser", JSON.stringify(userData))
-      localStorage.setItem("fc_fid", userData.fid)
-      localStorage.setItem("fc_username", userData.username)
-      localStorage.setItem("fc_display_name", userData.displayName)
-      localStorage.setItem("fc_pfp_url", userData.pfp || "")
-      if (userData.token) {
-        localStorage.setItem("fc_token", userData.token)
-      }
-      console.log("💾 User data saved to localStorage:", userData)
-    } catch (error) {
-      console.error("❌ Error saving user data:", error)
-    }
-  }
-
-  // Функция для загрузки данных из localStorage
-  const loadUserDataFromStorage = (): {
-    fid: string
-    username: string
-    displayName: string
-    pfp: string | null
-    token?: string
-  } | null => {
-    try {
-      const savedUser = localStorage.getItem("farcasterUser")
-      if (!savedUser) return null
-
-      const userData = JSON.parse(savedUser)
-
-      if (userData.fid && userData.username) {
-        return {
-          fid: userData.fid,
-          username: userData.username,
-          displayName: userData.displayName || userData.username,
-          pfp: userData.pfp,
-          token: userData.token,
-        }
-      }
-
-      return null
-    } catch (error) {
-      console.error("❌ Error loading user data from storage:", error)
-      return null
-    }
-  }
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
 
   // Функция для обновления данных пользователя
   const refreshUserData = async () => {
@@ -109,8 +108,10 @@ export function useQuickAuth(): QuickAuthResult {
         fid,
         username: username || `user_${fid}`,
         displayName: `${username} (Refreshed)`,
-        pfp: pfpUrl,
-        token,
+        pfpUrl,
+        bio,
+        followerCount,
+        followingCount,
       })
 
       console.log("💾 User data refreshed (demo mode)")
@@ -143,6 +144,9 @@ export function useQuickAuth(): QuickAuthResult {
           localStorage.removeItem("fc_username")
           localStorage.removeItem("fc_display_name")
           localStorage.removeItem("fc_pfp_url")
+          localStorage.removeItem("fc_bio")
+          localStorage.removeItem("fc_follower_count")
+          localStorage.removeItem("fc_following_count")
         }
 
         // Проверяем сохраненные данные
@@ -151,11 +155,13 @@ export function useQuickAuth(): QuickAuthResult {
           console.log("✅ Found valid saved user data:", savedUserData)
 
           // Устанавливаем данные
-          setToken(savedUserData.token || null)
           setFid(savedUserData.fid)
           setUsername(savedUserData.username)
           setDisplayName(savedUserData.displayName)
-          setPfpUrl(savedUserData.pfp)
+          setPfpUrl(savedUserData.pfpUrl)
+          setBio(savedUserData.bio)
+          setFollowerCount(savedUserData.followerCount)
+          setFollowingCount(savedUserData.followingCount)
           setIsAuthenticated(true)
 
           setIsLoading(false)
@@ -173,7 +179,10 @@ export function useQuickAuth(): QuickAuthResult {
           setFid(demoUser.fid)
           setUsername(demoUser.username)
           setDisplayName(demoUser.displayName)
-          setPfpUrl(demoUser.pfp)
+          setPfpUrl(demoUser.pfpUrl)
+          setBio(demoUser.bio)
+          setFollowerCount(demoUser.followerCount)
+          setFollowingCount(demoUser.followingCount)
           setIsAuthenticated(true)
 
           saveUserData(demoUser)
@@ -196,7 +205,7 @@ export function useQuickAuth(): QuickAuthResult {
           const signInResult = await sdk.actions.signIn()
           console.log("✅ signIn action completed")
 
-          if (!signInResult || !signInResult.token) {
+          if (!signInResult || !signInResult.fid) {
             throw new Error("No token returned from signIn")
           }
 
@@ -222,16 +231,21 @@ export function useQuickAuth(): QuickAuthResult {
             fid: userFid,
             username: `user_${userFid}`,
             displayName: `User ${userFid}`,
-            pfp: null,
+            pfpUrl: null,
+            bio: null,
+            followerCount: 0,
+            followingCount: 0,
             token: loginToken,
           }
 
           // Устанавливаем данные
-          setToken(loginToken)
           setFid(userData.fid)
           setUsername(userData.username)
           setDisplayName(userData.displayName)
-          setPfpUrl(userData.pfp)
+          setPfpUrl(userData.pfpUrl)
+          setBio(userData.bio)
+          setFollowerCount(userData.followerCount)
+          setFollowingCount(userData.followingCount)
           setIsAuthenticated(true)
 
           // Сохраняем в localStorage
@@ -248,7 +262,10 @@ export function useQuickAuth(): QuickAuthResult {
           setFid(guestUser.fid)
           setUsername(guestUser.username)
           setDisplayName(guestUser.displayName)
-          setPfpUrl(guestUser.pfp)
+          setPfpUrl(guestUser.pfpUrl)
+          setBio(guestUser.bio)
+          setFollowerCount(guestUser.followerCount)
+          setFollowingCount(guestUser.followingCount)
           setIsAuthenticated(true)
 
           saveUserData(guestUser)
@@ -262,7 +279,10 @@ export function useQuickAuth(): QuickAuthResult {
         setFid(guestUser.fid)
         setUsername(guestUser.username)
         setDisplayName(guestUser.displayName)
-        setPfpUrl(guestUser.pfp)
+        setPfpUrl(guestUser.pfpUrl)
+        setBio(guestUser.bio)
+        setFollowerCount(guestUser.followerCount)
+        setFollowingCount(guestUser.followingCount)
         setIsAuthenticated(true)
 
         saveUserData(guestUser)
@@ -275,14 +295,16 @@ export function useQuickAuth(): QuickAuthResult {
   }, [])
 
   return {
-    token,
     fid,
     username,
     displayName,
     pfpUrl,
+    bio,
+    followerCount,
+    followingCount,
+    isAuthenticated,
     isLoading,
     error,
-    isAuthenticated,
     refreshUserData,
     isRefreshing,
   }
