@@ -3,7 +3,6 @@
 import { AppProvider } from "@/contexts/app-context"
 import { WorldMap } from "@/components/world-map"
 import { useSimpleAuth } from "@/hooks/useSimpleAuth"
-import { useQuickAuth } from "@/hooks/useQuickAuth"
 import { useState, useEffect } from "react"
 import { AuthStatus } from "@/components/auth-status"
 
@@ -13,7 +12,6 @@ import { NeynarDebug } from "@/components/neynar-debug"
 import { TipsDebugger } from "@/components/tips-debugger"
 
 function AuthenticatedApp() {
-  const quickAuth = useQuickAuth() // Запускаем QuickAuth сразу
   const auth = useSimpleAuth()
   const [mounted, setMounted] = useState(false)
   const [appEntered, setAppEntered] = useState(false)
@@ -43,19 +41,19 @@ function AuthenticatedApp() {
     return () => clearTimeout(timer)
   }, [mounted, auth.isAuthenticated])
 
-  // Гостевой таймаут - НЕ показываем гостевой доступ до завершения QuickAuth
+  // Гостевой таймаут - НЕ показываем гостевой доступ до завершения авторизации
   useEffect(() => {
     if (!mounted) return
 
     const timer = setTimeout(() => {
-      if (!auth.isAuthenticated && !auth.isLoading && !quickAuth.isLoading) {
+      if (!auth.isAuthenticated && !auth.isLoading) {
         console.log("🕐 Auth timeout - allowing guest access")
         setAppEntered(true)
       }
-    }, 15000) // 15 секунд для полного процесса авторизации
+    }, 15000) // Увеличено до 15 секунд для signIn
 
     return () => clearTimeout(timer)
-  }, [mounted, auth.isAuthenticated, auth.isLoading, quickAuth.isLoading])
+  }, [mounted, auth.isAuthenticated, auth.isLoading])
 
   const handleRetry = () => {
     console.log("🔄 Retrying authentication...")
@@ -68,7 +66,7 @@ function AuthenticatedApp() {
   }
 
   // Показываем загрузку пока идет процесс авторизации
-  if ((auth.isLoading || quickAuth.isLoading) && !appEntered) {
+  if (auth.isLoading && !appEntered) {
     return (
       <main
         className="relative w-full h-full overflow-hidden"
@@ -84,9 +82,7 @@ function AuthenticatedApp() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fd0c96] mx-auto mb-4"></div>
           <h2 className="text-xl font-bold text-[#fd0c96] mb-2">Loading...</h2>
           <p className="text-sm text-gray-300">Connecting to Farcaster...</p>
-          <p className="text-xs text-gray-400 mt-2">
-            {quickAuth.isLoading ? "Authenticating..." : "Getting your profile data"}
-          </p>
+          <p className="text-xs text-gray-400 mt-2">Getting your profile data</p>
         </div>
       </main>
     )
@@ -145,10 +141,10 @@ function AuthenticatedApp() {
             Interactive Piggy ecosystem
           </p>
 
-          {auth.error || quickAuth.error ? (
+          {auth.error ? (
             <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
               <p className="text-red-400 text-sm font-medium">Authentication Error</p>
-              <p className="text-red-300 text-xs mt-1">{auth.error || quickAuth.error}</p>
+              <p className="text-red-300 text-xs mt-1">{auth.error}</p>
             </div>
           ) : (
             <div className="mb-4 p-3 bg-blue-500/20 border border-blue-500/50 rounded-lg">

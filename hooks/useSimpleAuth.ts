@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useQuickAuth } from "./useQuickAuth"
 
 interface UserData {
   fid: string
@@ -85,7 +84,6 @@ function loadUserData(): UserData | null {
 }
 
 export function useSimpleAuth() {
-  const quickAuth = useQuickAuth()
   const [fid, setFid] = useState<string | null>(null)
   const [username, setUsername] = useState<string>("")
   const [displayName, setDisplayName] = useState<string>("")
@@ -129,51 +127,60 @@ export function useSimpleAuth() {
     }
   }
 
+  // Функция для выполнения signIn
+  async function trySignIn(): Promise<UserData | null> {
+    try {
+      console.log("🚀 Starting signIn...")
+
+      // Динамический импорт SDK
+      const { sdk } = await import("@farcaster/miniapp-sdk")
+
+      // Инициализируем SDK
+      await sdk.actions.ready()
+      console.log("✅ SDK ready")
+
+      // Выполняем signIn
+      const result = await sdk.actions.signIn()
+
+      if (result) {
+        console.log("✅ signIn result:", result)
+
+        // Используем данные из signIn результата или получаем через API
+        const userData = {
+          fid: result.fid?.toString() || "",
+          username: result.username || `user_${result.fid}`,
+          displayName: result.displayName || result.username || `User ${result.fid}`,
+          pfpUrl: result.pfpUrl || null,
+          bio: result.bio || null,
+          followerCount: 0,
+          followingCount: 0,
+        }
+
+        // Если нужно, дополнительно получаем данные через Neynar
+        if (result.fid) {
+          const neynarData = await fetchUserData(result.fid.toString())
+          if (neynarData) {
+            return neynarData
+          }
+        }
+
+        return userData
+      } else {
+        console.log("⚠️ signIn returned null")
+        return null
+      }
+    } catch (error) {
+      console.error("❌ signIn error:", error)
+      return null
+    }
+  }
+
   async function initAuth() {
     console.log("🚀 Starting authentication...")
     setIsLoading(true)
     setError(null)
 
-    // 1. Если QuickAuth загружается, ждем его результата
-    if (quickAuth.isLoading) {
-      console.log("⏳ Waiting for QuickAuth...")
-      return
-    }
-
-    // 2. Если QuickAuth успешен, используем его данные
-    if (quickAuth.isAuthenticated && quickAuth.fid) {
-      console.log("✅ Using QuickAuth data:", quickAuth)
-
-      // Получаем дополнительные данные через Neynar
-      const userData = await fetchUserData(quickAuth.fid)
-      if (userData) {
-        setFid(userData.fid)
-        setUsername(userData.username)
-        setDisplayName(userData.displayName)
-        setPfpUrl(userData.pfpUrl)
-        setBio(userData.bio)
-        setFollowerCount(userData.followerCount)
-        setFollowingCount(userData.followingCount)
-        setIsAuthenticated(true)
-        saveUserData(userData)
-        setIsLoading(false)
-        return
-      } else {
-        // Используем данные из QuickAuth как fallback
-        setFid(quickAuth.fid)
-        setUsername(quickAuth.username || `user_${quickAuth.fid}`)
-        setDisplayName(quickAuth.displayName || quickAuth.username || `User ${quickAuth.fid}`)
-        setPfpUrl(quickAuth.pfpUrl)
-        setBio(`Farcaster user ${quickAuth.fid}`)
-        setFollowerCount(0)
-        setFollowingCount(0)
-        setIsAuthenticated(true)
-        setIsLoading(false)
-        return
-      }
-    }
-
-    // 3. Проверяем сохраненные данные
+    // 1. Проверяем сохраненные данные
     const storedData = loadUserData()
     if (storedData) {
       console.log("💾 Using stored user data:", storedData)
@@ -189,7 +196,32 @@ export function useSimpleAuth() {
       return
     }
 
-    // 4. Пытаемся получить FID из различных источников
+    // 2. Пытаемся выполнить signIn (только в Warpcast)
+    try {
+      const signInData = await trySignIn()
+      if (signInData) {
+        console.log("✅ signIn successful:", signInData)
+
+        setFid(signInData.fid)
+        setUsername(signInData.username)
+        setDisplayName(signInData.displayName)
+        setPfpUrl(signInData.pfpUrl)
+        setBio(signInData.bio)
+        setFollowerCount(signInData.followerCount)
+        setFollowingCount(signInData.followingCount)
+        setIsAuthenticated(true)
+
+        // Сохраняем в localStorage
+        saveUserData(signInData)
+
+        setIsLoading(false)
+        return
+      }
+    } catch (error) {
+      console.log("⚠️ signIn not available or failed:", error)
+    }
+
+    // 3. Пытаемся получить FID из различных источников
     const urlFid = getFidFromUrl()
     const frameFid = getFrameFid()
     const targetFid = urlFid || frameFid
@@ -199,6 +231,7 @@ export function useSimpleAuth() {
 
       const userData = await fetchUserData(targetFid)
       if (userData) {
+        // Устанавливаем реальные данные
         setFid(userData.fid)
         setUsername(userData.username)
         setDisplayName(userData.displayName)
@@ -207,15 +240,18 @@ export function useSimpleAuth() {
         setFollowerCount(userData.followerCount)
         setFollowingCount(userData.followingCount)
         setIsAuthenticated(true)
+
+        // Сохраняем в localStorage
         saveUserData(userData)
+
         console.log("✅ Auth successful with real Neynar data")
         setIsLoading(false)
         return
       }
     }
 
-    // 5. Fallback - создаем гостевого пользователя
-    console.log("🏠 Creating guest user")
+    // 4. Fallback - создаем гостевого пользователя (только если все остальное не сработало)
+    console.log("🏠 No authentication method worked, creating guest user")
     const guestUser = {
       fid: "guest_" + Date.now(),
       username: "guest_user",
@@ -262,7 +298,7 @@ export function useSimpleAuth() {
 
   useEffect(() => {
     initAuth()
-  }, [quickAuth.isLoading, quickAuth.isAuthenticated])
+  }, [])
 
   return {
     fid,
