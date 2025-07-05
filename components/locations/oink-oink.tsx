@@ -165,7 +165,7 @@ export function OinkOink() {
           .catch((error) => console.error("❌ Error polling messages:", error))
           .finally(() => setIsPolling(false))
       }
-    }, 2000)
+    }, 5000)
 
     // Polling баланса каждые 5 секунд
     balanceIntervalRef.current = setInterval(() => {

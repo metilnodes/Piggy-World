@@ -178,7 +178,7 @@ export function useSimpleAuth() {
     }
 
     // 3. Fallback - создаем гостевого пользователя
-    console.log("🏠 No FID found, creating guest user")
+    console.log("🏠 No authentication method worked, creating guest user")
     const guestUser = {
       fid: "guest_" + Date.now(),
       username: "guest_user",
