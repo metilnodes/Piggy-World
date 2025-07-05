@@ -41,19 +41,19 @@ function AuthenticatedApp() {
     return () => clearTimeout(timer)
   }, [mounted, auth.isAuthenticated])
 
-  // Гостевой таймаут - если через определенное время auth не сработал, даем гостевой доступ
+  // Гостевой таймаут - НЕ показываем гостевой доступ до завершения QuickAuth
   useEffect(() => {
     if (!mounted) return
 
     const timer = setTimeout(() => {
-      if (!auth.isAuthenticated && !auth.error) {
-        console.log("🕐 Guest timeout - allowing guest access")
+      if (!auth.isAuthenticated && !auth.isLoading) {
+        console.log("🕐 Auth timeout - allowing guest access")
         setAppEntered(true)
       }
-    }, 12000) // Увеличено до 12 секунд для QuickAuth
+    }, 15000) // Увеличено до 15 секунд для QuickAuth
 
     return () => clearTimeout(timer)
-  }, [mounted, auth.isAuthenticated, auth.error])
+  }, [mounted, auth.isAuthenticated, auth.isLoading])
 
   const handleRetry = () => {
     console.log("🔄 Retrying authentication...")
@@ -65,7 +65,7 @@ function AuthenticatedApp() {
     return null
   }
 
-  // Показываем загрузку только если не истек таймаут
+  // Показываем загрузку пока идет процесс авторизации
   if (auth.isLoading && !appEntered) {
     return (
       <main
