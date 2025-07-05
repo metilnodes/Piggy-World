@@ -1,42 +1,85 @@
-export async function initFrames() {
+"use client"
+
+export function isInWarpcast(): boolean {
+  if (typeof window === "undefined") return false
+
   try {
-    // Проверяем, что мы в браузере
-    if (typeof window === "undefined") return false
+    // Проверяем различные способы определения Warpcast
+    const userAgent = window.navigator.userAgent.toLowerCase()
+    const isWarpcastUA = userAgent.includes("warpcast")
+    const isInIframe = window.self !== window.top
+    const hasWarpcastContext = !!(window as any).warpcast
 
-    // Динамический импорт SDK для избежания ошибок SSR
-    const { sdk } = await import("@farcaster/frame-sdk")
+    console.log("🔍 Environment check:", {
+      userAgent: userAgent,
+      isWarpcastUA,
+      isInIframe,
+      hasWarpcastContext,
+    })
 
-    // Инициализация Frame SDK с отключением нативных жестов
-    await sdk.actions.ready({ disableNativeGestures: true })
-
-    // Делаем SDK доступным глобально для использования в других компонентах
-    ;(window as any).sdk = sdk
-
-    console.log("Frame SDK initialized successfully and made globally available")
-    return true
+    return isWarpcastUA || isInIframe || hasWarpcastContext
   } catch (error) {
-    console.error("Error initializing Frame SDK:", error)
+    console.error("Error checking Warpcast environment:", error)
     return false
   }
 }
 
-// Функция для определения, открыто ли приложение в Warpcast/Farcaster
-export function isInWarpcast(): boolean {
+export async function initFrames(): Promise<void> {
   try {
-    if (typeof window === "undefined") return false
+    console.log("🚀 Initializing Farcaster SDK...")
 
-    // Проверяем мета-тег fc:frame
-    const hasFrameMetaTag = !!document.querySelector('meta[name="fc:frame"]')
+    // Динамический импорт нового SDK
+    const { sdk } = await import("@farcaster/miniapp-sdk")
 
-    // Дополнительные проверки
-    const userAgent = navigator.userAgent.toLowerCase()
-    const isWarpcastUA = userAgent.includes("warpcast") || userAgent.includes("farcaster")
-    const isFramed = window.parent !== window
-    const referrerCheck = document.referrer.includes("warpcast") || document.referrer.includes("farcaster")
+    // Инициализируем SDK
+    await sdk.actions.ready()
 
-    return hasFrameMetaTag || isWarpcastUA || isFramed || referrerCheck
+    // Сохраняем SDK глобально для использования в других частях приложения
+    ;(window as any).sdk = sdk
+
+    console.log("✅ Frame SDK initialized successfully and made globally available")
   } catch (error) {
-    console.error("Error checking if in Warpcast:", error)
-    return false
+    console.error("❌ Failed to initialize Frame SDK:", error)
+    throw error
+  }
+}
+
+export async function initAndMaybeAddMiniApp(): Promise<void> {
+  try {
+    console.log("🚀 Starting Farcaster initialization and Mini App check...")
+
+    // Проверяем, находимся ли мы в Warpcast
+    const inWarpcast = isInWarpcast()
+    console.log("🖼️ In Warpcast:", inWarpcast)
+
+    if (!inWarpcast) {
+      console.log("ℹ️ Not in Warpcast, skipping SDK initialization")
+      return
+    }
+
+    // Инициализируем SDK
+    await initFrames()
+
+    // Получаем SDK из глобального объекта
+    const sdk = (window as any).sdk
+    if (!sdk || typeof sdk.getContext !== "function") {
+      console.log("⚠️ SDK not available or getContext missing")
+      return
+    }
+
+    // Получаем контекст
+    const context = await sdk.getContext()
+    console.log("🔍 SDK Context:", context)
+
+    // Проверяем, нужно ли показывать prompt для добавления Mini App
+    if (context?.client?.added === false && context?.client?.type === "warpcast") {
+      console.log("ℹ️ Triggering addMiniApp prompt...")
+      await sdk.actions.addMiniApp()
+      console.log("✅ AddMiniApp prompt shown")
+    } else {
+      console.log("ℹ️ Mini App already added or not in Warpcast client")
+    }
+  } catch (error) {
+    console.error("❌ Error in initAndMaybeAddMiniApp:", error)
   }
 }
