@@ -47,6 +47,7 @@ function DailyOinkModal({
   isLoading,
   totalCheckins,
   lastCheckInResult,
+  streakDates = [], // Add this parameter
 }: {
   isOpen: boolean
   onClose: () => void
@@ -56,6 +57,7 @@ function DailyOinkModal({
   isLoading: boolean
   totalCheckins: number
   lastCheckInResult?: { success: boolean; message: string; reward?: number } | null
+  streakDates?: string[] // Add this type
 }) {
   // Auto-close modal after successful check-in
   useEffect(() => {
@@ -189,20 +191,33 @@ function DailyOinkModal({
 
             {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1">
-              {calendarDays.map((day, index) => (
-                <div
-                  key={index}
-                  className={`text-center p-1 text-xs ${
-                    day === null
-                      ? ""
-                      : day === today
+              {calendarDays.map((day, index) => {
+                if (day === null) {
+                  return <div key={index} className="text-center p-1 text-xs"></div>
+                }
+
+                // Create date string for this day
+                const dayDateStr = `${utcDate.getFullYear()}-${String(utcDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+
+                // Check if this day is in streak
+                const isStreakDay = streakDates.includes(dayDateStr)
+                const isToday = day === today
+
+                return (
+                  <div
+                    key={index}
+                    className={`text-center p-1 text-xs ${
+                      isToday
                         ? "bg-[#fd0c96] text-black font-bold rounded"
-                        : "text-white hover:bg-[#fd0c96]/20 rounded"
-                  }`}
-                >
-                  {day}
-                </div>
-              ))}
+                        : isStreakDay
+                          ? "bg-[#fd0c96]/60 text-white font-medium rounded"
+                          : "text-white hover:bg-[#fd0c96]/20 rounded"
+                    }`}
+                  >
+                    {day}
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -234,7 +249,7 @@ export function Casino() {
   const { fid, username, displayName, pfpUrl } = useHybridAuth()
 
   // Используем кастомный хук для Daily Check-in
-  const { hasCheckedInToday, markAsCheckedIn } = useDailyCheckinStatus()
+  const { hasCheckedInToday, markAsCheckedIn, streakDates } = useDailyCheckinStatus()
 
   const [selectedGame, setSelectedGame] = useState<GameType | null>(null)
   const [showDailyOink, setShowDailyOink] = useState(false)
@@ -243,6 +258,7 @@ export function Casino() {
   const [dailyOinkStatus, setDailyOinkStatus] = useState({
     currentStreak: 0,
     totalCheckins: 0,
+    streakDates: [] as string[], // Add this
     isLoading: false,
   })
 
@@ -343,6 +359,7 @@ export function Casino() {
         setDailyOinkStatus({
           currentStreak: data.streak,
           totalCheckins: dailyOinkStatus.totalCheckins + 1,
+          streakDates: [], // Will be updated by reload
           isLoading: false,
         })
 
@@ -353,11 +370,20 @@ export function Casino() {
           reward: data.reward,
         })
 
-        // УБИРАЕМ этот вызов - баланс уже обновлен в API
-        // await addToBalance(data.reward)
-
-        // Вместо этого просто обновляем баланс из БД
+        // Обновляем баланс из БД
         await fetchBalance()
+
+        // Перезагружаем статус для получения обновленных streakDates
+        setTimeout(async () => {
+          const statusResponse = await fetch(`/api/daily-checkin?fid=${userData.fid}`)
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json()
+            setDailyOinkStatus((prev) => ({
+              ...prev,
+              streakDates: statusData.streakDates || [],
+            }))
+          }
+        }, 500)
 
         console.log("🎉 Check-in completed successfully!")
       } else {
@@ -394,6 +420,7 @@ export function Casino() {
             setDailyOinkStatus({
               currentStreak: data.currentStreak,
               totalCheckins: data.totalCheckins,
+              streakDates: data.streakDates || [], // Add this
               isLoading: false,
             })
           } else {
@@ -539,6 +566,7 @@ export function Casino() {
         isLoading={dailyOinkStatus.isLoading}
         totalCheckins={dailyOinkStatus.totalCheckins}
         lastCheckInResult={lastCheckInResult}
+        streakDates={dailyOinkStatus.streakDates} // Add this line
       />
     </div>
   )
