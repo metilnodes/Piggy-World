@@ -27,7 +27,7 @@ export function hasCheckedInToday(): boolean {
     const today = new Date().toISOString().split("T")[0]
     return last === today
   } catch (e) {
-    console.error("⚠️ Ошибка при проверке статуса check-in:", e)
+    console.error("⚠️ Ош��бка при проверке статуса check-in:", e)
     return false
   }
 }
