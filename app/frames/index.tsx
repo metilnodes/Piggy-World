@@ -1,53 +1,62 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { sdk } from "@farcaster/miniapp-sdk"
 
-export async function initAndMaybeAddMiniApp() {
+let isInitialized = false
+
+export async function initFrames() {
+  if (isInitialized) {
+    console.log("🔄 Frames already initialized")
+    return
+  }
+
   try {
-    console.log("🚀 Initializing SDK and checking addMiniApp...")
-
-    // Динамический импорт SDK
-    const { sdk } = await import("@farcaster/miniapp-sdk")
-
-    // Инициализируем SDK
+    console.log("🚀 Initializing Frames SDK...")
     await sdk.actions.ready()
-    console.log("✅ SDK ready")
-
-    // Получаем контекст
-    const context = sdk.getContext()
-    console.log("📱 SDK Context:", context)
-
-    // Проверяем, добавлено ли уже приложение
-    if (context?.client?.added) {
-      console.log("✅ Mini App already added")
-      return
-    }
-
-    // Пытаемся добавить Mini App
-    console.log("➕ Attempting to add Mini App...")
-    await sdk.actions.addMiniApp()
-    console.log("✅ Mini App added successfully")
+    isInitialized = true
+    console.log("✅ Frames SDK initialized successfully")
   } catch (error) {
-    console.error("❌ Error in initAndMaybeAddMiniApp:", error)
+    console.error("❌ Failed to initialize Frames SDK:", error)
+    throw error
   }
 }
 
-export default function FramesPage() {
-  const [mounted, setMounted] = useState(false)
+export async function addMiniApp() {
+  try {
+    console.log("🔍 Checking if Mini App is already added...")
 
-  useEffect(() => {
-    setMounted(true)
-    initAndMaybeAddMiniApp()
-  }, [])
+    // Получаем контекст
+    const context = await sdk.getContext()
 
-  if (!mounted) {
-    return null
+    if (context?.client?.added) {
+      console.log("✅ Mini App already added")
+      return true
+    }
+
+    console.log("➕ Adding Mini App...")
+    const result = await sdk.actions.addFrame()
+
+    if (result) {
+      console.log("✅ Mini App added successfully:", result)
+      return true
+    } else {
+      console.log("⚠️ Add Mini App returned false")
+      return false
+    }
+  } catch (error) {
+    console.error("❌ Failed to add Mini App:", error)
+    return false
   }
+}
 
-  return (
-    <div className="p-4">
-      <h1>Frames Integration</h1>
-      <p>SDK initialization and Mini App setup</p>
-    </div>
-  )
+export async function initAndMaybeAddMiniApp() {
+  try {
+    // Сначала инициализируем SDK
+    await initFrames()
+
+    // Затем пытаемся добавить Mini App
+    await addMiniApp()
+  } catch (error) {
+    console.error("❌ Error in initAndMaybeAddMiniApp:", error)
+  }
 }
