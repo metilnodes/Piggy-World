@@ -168,7 +168,7 @@ export function OinkOink() {
           .catch((error) => console.error("❌ Error polling messages:", error))
           .finally(() => setIsPolling(false))
       }
-    }, 5000)
+    }, 2000)
 
     // Polling баланса каждые 5 секунд
     balanceIntervalRef.current = setInterval(() => {
@@ -310,10 +310,29 @@ export function OinkOink() {
     const messageText = inputMessage.trim()
     const isTipsCommand = messageText.toLowerCase().startsWith("!tips")
 
-    setInputMessage("") // Очищаем поле сразу
-    inputRef.current?.focus()
-
     setIsSending(true)
+
+    const message = {
+      id: `${Date.now()}`,
+      text: inputMessage,
+      sender: {
+        fid: currentUser.fid ?? 0,
+        username: currentUser.username ?? "guest",
+        pfp: currentUser.pfp ?? "",
+      },
+      optimistic: true,
+    }
+
+    // Обновляем UI сразу (оптимистично)
+    setMessages((prev) => [...prev, message])
+
+    // Очищаем инпут
+    setInputMessage("")
+
+    // Надежно возвращаем фокус после следующего рендера
+    requestAnimationFrame(() => {
+      inputRef.current?.focus()
+    })
 
     try {
       if (isTipsCommand) {
