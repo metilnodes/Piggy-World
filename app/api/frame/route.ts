@@ -18,6 +18,7 @@ export async function GET() {
         <meta property="fc:frame:button:1" content="Open Piggy World" />
         <meta property="fc:frame:button:1:action" content="post_redirect" />
         <meta property="fc:frame:button:1:target" content="${BASE_URL}" />
+        <meta property="fc:frame:post_url" content="${BASE_URL}/api/frame-events" />
 
         <meta property="fc:frame:embed" content='{
           "appId": "0197c693-6369-5ad3-dd98-effee2596d7a",

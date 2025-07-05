@@ -1,204 +1,38 @@
-"use client"
+import type { Metadata } from "next"
+import ClientPage from "./client-page"
 
-import { AppProvider } from "@/contexts/app-context"
-import { WorldMap } from "@/components/world-map"
-import { useSimpleAuth } from "@/hooks/useSimpleAuth"
-import { useState, useEffect } from "react"
-import { AuthStatus } from "@/components/auth-status"
-import Head from "next/head"
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://piggyworld.xyz"
 
-// Импорты дебагеров - только если нужны для разработки
-import { SimpleAuthDebug } from "@/components/simple-auth-debug"
-import { NeynarDebug } from "@/components/neynar-debug"
-import { TipsDebugger } from "@/components/tips-debugger"
-
-function AuthenticatedApp() {
-  const auth = useSimpleAuth()
-  const [mounted, setMounted] = useState(false)
-  const [appEntered, setAppEntered] = useState(false)
-
-  // Проверяем режим разработки
-  const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === "true"
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
-  useEffect(() => {
-    if (!mounted) return
-
-    const timer = setTimeout(() => {
-      if (!auth.isAuthenticated && !auth.error) {
-        console.log("🕐 Guest timeout - allowing guest access")
-        setAppEntered(true)
-      }
-    }, 10000) // Увеличено до 10 секунд
-
-    return () => clearTimeout(timer)
-  }, [mounted, auth.isAuthenticated, auth.error])
-
-  // Инициализация Frame SDK после монтирования
-  useEffect(() => {
-    if (!mounted) return
-
-    const initializeFrames = async () => {
-      try {
-        const { initFrames, isInWarpcast } = await import("@/app/frames/index")
-        const isInFrame = isInWarpcast()
-        console.log("🖼️ Frame context:", { isInFrame })
-
-        if (isInFrame) {
-          await initFrames()
-        }
-      } catch (error) {
-        console.error("Frame initialization error:", error)
-      }
-    }
-
-    initializeFrames()
-  }, [mounted])
-
-  const handleRetry = () => {
-    console.log("🔄 Retrying authentication...")
-    window.location.reload()
-  }
-
-  // Не показываем ничего до монтирования
-  if (!mounted) {
-    return null
-  }
-
-  // Показываем загрузку только если не истек таймаут
-  if (auth.isLoading && !appEntered) {
-    return (
-      <main
-        className="relative w-full h-full overflow-hidden"
-        style={{
-          backgroundImage: "url('/background.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 backdrop-blur-md bg-black bg-opacity-50 z-0" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fd0c96] mx-auto mb-4"></div>
-          <h2 className="text-xl font-bold text-[#fd0c96] mb-2">Loading...</h2>
-          <p className="text-sm text-gray-300">Connecting to Farcaster...</p>
-          <p className="text-xs text-gray-400 mt-2">Getting your profile data</p>
-        </div>
-      </main>
-    )
-  }
-
-  // Если пользователь авторизован ИЛИ разрешен гостевой доступ
-  if (auth.isAuthenticated || appEntered) {
-    return (
-      <main
-        className="relative w-full h-full overflow-hidden"
-        style={{
-          backgroundImage: "url('/background.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="relative w-full h-full">
-          <WorldMap />
-        </div>
-
-        {/* Все дебагеры и статус аутентификации - показываем только в режиме разработки */}
-        {isDevMode && (
-          <>
-            <AuthStatus />
-            <SimpleAuthDebug />
-            <NeynarDebug />
-            <TipsDebugger />
-          </>
-        )}
-      </main>
-    )
-  }
-
-  // Экран ошибки
-  return (
-    <main
-      className="relative w-full h-full overflow-hidden"
-      style={{
-        backgroundImage: "url('/background.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="absolute inset-0 backdrop-blur-md bg-black bg-opacity-30 z-0" />
-      <div
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-[360px] w-full bg-black bg-opacity-70 p-6 rounded-lg shadow-lg backdrop-blur-sm transition-all duration-500 z-10"
-        style={{ border: "1px solid #fd0c96" }}
-      >
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4" style={{ color: "#fd0c96" }}>
-            Piggy World
-          </h1>
-          <p className="text-sm mb-4" style={{ color: "#fd0c96" }}>
-            Interactive Piggy ecosystem
-          </p>
-
-          {auth.error ? (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
-              <p className="text-red-400 text-sm font-medium">Authentication Error</p>
-              <p className="text-red-300 text-xs mt-1">{auth.error}</p>
-            </div>
-          ) : (
-            <div className="mb-4 p-3 bg-blue-500/20 border border-blue-500/50 rounded-lg">
-              <p className="text-blue-400 text-sm">Waiting for Farcaster authentication...</p>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <button onClick={handleRetry} className="neon-button w-full">
-              Try Again
-            </button>
-            <button onClick={() => setAppEntered(true)} className="neon-button w-full opacity-75">
-              Continue as Guest
-            </button>
-          </div>
-        </div>
-      </div>
-    </main>
-  )
+export const metadata: Metadata = {
+  title: "OINK World",
+  description: "Enter the world of Piggy",
+  openGraph: {
+    title: "OINK World",
+    description: "Enter the world of Piggy",
+    images: [
+      {
+        url: `${BASE_URL}/og.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "OINK World",
+      },
+    ],
+  },
+  other: {
+    "fc:frame": "vNext",
+    "fc:frame:image": `${BASE_URL}/og.jpg`,
+    "fc:frame:button:1": "Open Piggy World",
+    "fc:frame:button:1:action": "post_redirect",
+    "fc:frame:button:1:target": BASE_URL,
+    "fc:frame:post_url": `${BASE_URL}/api/frame-events`,
+    "fc:frame:embed": `{"appId":"0197c693-6369-5ad3-dd98-effee2596d7a","url":"${BASE_URL}","version":"vNext"}`,
+  },
 }
 
-export default function Home() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://piggyworld.xyz"
-
+export default function HomePage() {
   return (
     <>
-      <Head>
-        <title>Piggy World - Enter the OINK Universe</title>
-        <meta name="description" content="Join the ultimate pig-themed adventure in Piggy World" />
-
-        {/* Open Graph */}
-        <meta property="og:title" content="Piggy World" />
-        <meta property="og:description" content="Enter the world of Piggy" />
-        <meta property="og:image" content={`${baseUrl}/og-image.png`} />
-
-        {/* Farcaster Frame */}
-        <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content={`${baseUrl}/og-image.png`} />
-        <meta property="fc:frame:button:1" content="Open Piggy World" />
-        <meta property="fc:frame:button:1:action" content="post_redirect" />
-        <meta property="fc:frame:button:1:target" content={baseUrl} />
-        <meta
-          property="fc:frame:embed"
-          content={`{"appId":"0197c693-6369-5ad3-dd98-effee2596d7a","url":"${baseUrl}","version":"vNext"}`}
-        />
-      </Head>
-
-      <AppProvider>
-        <AuthenticatedApp />
-      </AppProvider>
+      <ClientPage />
     </>
   )
 }
