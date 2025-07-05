@@ -1,13 +1,13 @@
-import { sdk } from "@farcaster/frame-sdk"
+import { sdk } from "@farcaster/miniapp-sdk"
 
 export async function initFrames() {
   try {
-    // Инициализация Frame SDK с отключением нативных жестов
+    // Инициализация Miniapp SDK с отключением нативных жестов
     await sdk.actions.ready({ disableNativeGestures: true })
-    console.log("Frame SDK initialized successfully")
+    console.log("Miniapp SDK initialized successfully")
     return true
   } catch (error) {
-    console.error("Error initializing Frame SDK:", error)
+    console.error("Error initializing Miniapp SDK:", error)
     return false
   }
 }
