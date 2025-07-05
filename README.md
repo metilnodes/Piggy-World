@@ -1,30 +1,51 @@
-# 🐽 Piggy World - mini-app in Farcaster
+# Simple Farcaster Mini App
 
-![Piggy World](https://github.com/metilnodes/metilnodes/blob/main/pics/pwkvadrat.png)
+This is a basic Farcaster Mini App that demonstrates user authentication using the Farcaster Auth Kit.
 
-It’s an interactive experience themed around the Piggy ecosystem, with a bit of fun and flavor :pig:
+## Prerequisites
 
-## There are 8 clickable locations, each opening its own in-app scene with unique logic and visuals:
+1. Install Node.js from https://nodejs.org/ (LTS version recommended)
+2. After installing Node.js, restart your terminal/computer
 
-**Piggy AI** – Learn about the Piggy agent and access helpful links
+## Setup
 
-**Piggy Bank** – A dedicated zone for $PIGGY 
+1. Install dependencies:
+\`\`\`bash
+npm install
+\`\`\`
 
-**Piggy DAO** – Community governance hub: explore proposals, track treasury stats, and support the mission with donations
+2. Run the development server:
+\`\`\`bash
+npm run dev
+\`\`\`
 
-**SUPERFORM AREA** – Learn about Superform and explore vaults to earn yield
+3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-**Casino** – Mini-games using in-game coins
+## Features
 
-**PNN** – Piggy News Network, your source for all things Piggy
+- Farcaster Authentication
+- Simple user greeting
+- Clean, minimal UI with Tailwind CSS
 
-**Oink-Oink** – Chat zone with Discord/Telegram links and the `!tips` coin-sending feature
+## Project Structure
 
-**GAME ZONE** – Discover and play Piggy-themed mini-games
+- `src/app/page.tsx` - Main application page
+- `src/app/layout.tsx` - Root layout component
+- `src/app/globals.css` - Global styles
 
----
-📱 **Mini App**: https://farcaster.xyz/miniapps/0P-ysyDsD4fn/piggy-world
+## Deploying to Farcaster
 
-:globe_with_meridians: **Web version**: https://www.piggyworld.xyz/
+1. Build the application:
+\`\`\`bash
+npm run build
+\`\`\`
 
-Accessible on both mobile and desktop browsers
+2. Deploy the built application to your preferred hosting service (Vercel, Netlify, etc.)
+
+3. Submit your Mini App to Farcaster for review
+
+## Notes
+
+- This is a minimal implementation meant to serve as a starting point
+- Make sure to handle errors appropriately in a production environment
+- Consider adding more features and improving the UI for a better user experience

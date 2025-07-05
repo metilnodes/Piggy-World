@@ -187,17 +187,17 @@ export function useQuickAuth(): QuickAuthResult {
           console.log("🔍 Trying to use Frame SDK...")
 
           // Динамический импорт SDK
-          const { sdk } = await import("@farcaster/miniapp-sdk")
+          const { sdk } = await import("@farcaster/frame-sdk")
 
           // Инициализируем SDK
           await sdk.actions.ready()
 
-          // Вызываем signIn вместо quickAuth
-          const signInResult = await sdk.actions.signIn()
-          console.log("✅ signIn action completed")
+          // Вызываем QuickAuth
+          const signInResult = await sdk.experimental.quickAuth()
+          console.log("✅ QuickAuth action completed")
 
           if (!signInResult || !signInResult.token) {
-            throw new Error("No token returned from signIn")
+            throw new Error("No token returned from QuickAuth")
           }
 
           const loginToken = signInResult.token
@@ -239,7 +239,7 @@ export function useQuickAuth(): QuickAuthResult {
 
           console.log("✅ Auth successful:", userData)
         } catch (sdkError: any) {
-          console.error("❌ SDK or signIn error:", sdkError)
+          console.error("❌ SDK or QuickAuth error:", sdkError)
 
           // Создаем гостевого пользователя в случае ошибки
           console.log("🧪 Creating guest user due to SDK error")
