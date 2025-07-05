@@ -22,7 +22,7 @@ export default function Head() {
       <meta name="description" content="Interactive OINK ecosystem with 7 unique locations" />
 
       {/* Единственный мета-тег fc:frame с JSON */}
-      <meta name="fc:frame" content={JSON.stringify(embedPayload)} />
+      <meta property="fc:frame:post_url" content={`${BASE_URL}/api/frame-events`} />
 
       {/* Open Graph теги для превью */}
       <meta property="og:title" content="Piggy World" />
