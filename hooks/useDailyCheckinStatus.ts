@@ -1,34 +1,45 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAppContext } from "@/contexts/app-context"
+import { useHybridAuth } from "@/hooks/useHybridAuth"
 
 export function useDailyCheckinStatus() {
-  const { user } = useAppContext()
+  const { fid, username } = useHybridAuth()
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false)
   const [todayDate, setTodayDate] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const [streakDates, setStreakDates] = useState<string[]>([])
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0]
     setTodayDate(today)
 
     const fetchStatus = async () => {
-      if (!user?.fid) {
-        console.log("No user FID available")
+      if (!fid) {
+        console.log("No FID available, skipping status fetch")
         setIsLoading(false)
         return
       }
 
       try {
-        const res = await fetch(`/api/daily-checkin?fid=${user.fid}`, {
+        console.log(`Fetching daily check-in status for FID: ${fid}`)
+
+        const res = await fetch(`/api/daily-checkin?fid=${fid}`, {
           method: "GET",
           headers: {
             "Cache-Control": "no-cache",
           },
         })
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+        }
+
         const data = await res.json()
-        setHasCheckedInToday(data.alreadyChecked || false)
+        console.log("Daily check-in status response:", data)
+
+        setHasCheckedInToday(data.hasCheckedInToday || data.alreadyChecked || false)
+        setStreakDates(data.streakDates || [])
       } catch (err) {
         console.error("Failed to fetch check-in status:", err)
       } finally {
@@ -37,7 +48,7 @@ export function useDailyCheckinStatus() {
     }
 
     fetchStatus()
-  }, [user?.fid])
+  }, [fid])
 
   const markAsCheckedIn = () => {
     const today = new Date().toISOString().split("T")[0]
@@ -50,5 +61,6 @@ export function useDailyCheckinStatus() {
     markAsCheckedIn,
     todayDate,
     isLoading,
+    streakDates,
   }
 }

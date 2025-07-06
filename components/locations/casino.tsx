@@ -47,7 +47,7 @@ function DailyOinkModal({
   isLoading,
   totalCheckins,
   lastCheckInResult,
-  streakDates = [], // Add this parameter
+  streakDates = [],
 }: {
   isOpen: boolean
   onClose: () => void
@@ -57,7 +57,7 @@ function DailyOinkModal({
   isLoading: boolean
   totalCheckins: number
   lastCheckInResult?: { success: boolean; message: string; reward?: number } | null
-  streakDates?: string[] // Add this type
+  streakDates?: string[]
 }) {
   // Auto-close modal after successful check-in
   useEffect(() => {
@@ -235,7 +235,7 @@ function DailyOinkModal({
             }}
           >
             <Sparkles className="h-4 w-4" />
-            {isLoading ? "Processing..." : hasCheckedInToday ? "Already checked in today" : "Check-in and get 10 OINK"}
+            {isLoading ? "Loading..." : hasCheckedInToday ? "Already checked in today" : "Check-in and get 10 OINK"}
           </button>
         </div>
       </div>
@@ -249,7 +249,7 @@ export function Casino() {
   const { fid, username, displayName, pfpUrl } = useHybridAuth()
 
   // Используем кастомный хук для Daily Check-in
-  const { hasCheckedInToday, markAsCheckedIn, streakDates } = useDailyCheckinStatus()
+  const { hasCheckedInToday, markAsCheckedIn, streakDates, isLoading: checkinLoading } = useDailyCheckinStatus()
 
   const [selectedGame, setSelectedGame] = useState<GameType | null>(null)
   const [showDailyOink, setShowDailyOink] = useState(false)
@@ -258,7 +258,7 @@ export function Casino() {
   const [dailyOinkStatus, setDailyOinkStatus] = useState({
     currentStreak: 0,
     totalCheckins: 0,
-    streakDates: [] as string[], // Add this
+    streakDates: [] as string[],
     isLoading: false,
   })
 
@@ -359,7 +359,7 @@ export function Casino() {
         setDailyOinkStatus({
           currentStreak: data.streak,
           totalCheckins: dailyOinkStatus.totalCheckins + 1,
-          streakDates: [], // Will be updated by reload
+          streakDates: [],
           isLoading: false,
         })
 
@@ -420,7 +420,7 @@ export function Casino() {
             setDailyOinkStatus({
               currentStreak: data.currentStreak,
               totalCheckins: data.totalCheckins,
-              streakDates: data.streakDates || [], // Add this
+              streakDates: data.streakDates || [],
               isLoading: false,
             })
           } else {
@@ -542,7 +542,12 @@ export function Casino() {
             boxShadow: hasCheckedInToday ? "0 0 10px #22c55e" : "0 0 10px #fd0c96",
           }}
         >
-          {hasCheckedInToday ? (
+          {checkinLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>
+              Loading...
+            </>
+          ) : hasCheckedInToday ? (
             <>
               <CheckCircle className="h-5 w-5" />
               Checked In Today!
@@ -566,7 +571,7 @@ export function Casino() {
         isLoading={dailyOinkStatus.isLoading}
         totalCheckins={dailyOinkStatus.totalCheckins}
         lastCheckInResult={lastCheckInResult}
-        streakDates={dailyOinkStatus.streakDates} // Add this line
+        streakDates={dailyOinkStatus.streakDates}
       />
     </div>
   )
