@@ -139,6 +139,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       hasCheckedInToday,
+      alreadyChecked: hasCheckedInToday, // Добавляем это поле для совместимости с хуком
       currentStreak,
       totalCheckins: Number.parseInt(totalCount.toString()),
       lastCheckInDate,

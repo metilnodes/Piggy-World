@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useAppContext } from "@/contexts/app-context"
 
 export function useDailyCheckinStatus() {
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false)
   const [todayDate, setTodayDate] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const { user } = useAppContext()
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0]
@@ -13,7 +15,13 @@ export function useDailyCheckinStatus() {
 
     const fetchStatus = async () => {
       try {
-        const res = await fetch("/api/daily-checkin", {
+        if (!user?.fid) {
+          console.log("No user FID available")
+          setIsLoading(false)
+          return
+        }
+
+        const res = await fetch(`/api/daily-checkin?fid=${user.fid}`, {
           method: "GET",
           headers: {
             "Cache-Control": "no-cache",
@@ -29,7 +37,7 @@ export function useDailyCheckinStatus() {
     }
 
     fetchStatus()
-  }, [])
+  }, [user?.fid])
 
   // Call this after successful check-in
   const markAsCheckedIn = () => {
