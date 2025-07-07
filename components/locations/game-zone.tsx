@@ -45,6 +45,13 @@ const games = [
     externalUrl: "https://superform2048.vercel.app/",
     isNew: true,
   },
+  {
+    id: "piggy-typing",
+    name: "Piggy Typing...",
+    description: "Test your typing skills",
+    externalUrl: "https://superform-typing-game.vercel.app/",
+    isNew: true,
+  },
 ]
 
 export function GameZone() {
@@ -81,7 +88,7 @@ export function GameZone() {
         </div>
 
         {!selectedGame ? (
-          <div className="grid gap-2 max-h-[500px] overflow-y-auto pr-2">
+          <div className="grid gap-2 max-h-[700px] overflow-y-auto pr-2">
             {games.map((game) => (
               <div
                 key={game.id}

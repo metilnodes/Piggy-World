@@ -54,7 +54,7 @@ body {
   color: black;
 }
 
-/* Добавляем анимацию бе����ущей строки */
+/* Добавляем анимацию бе�����ущей строки */
 @keyframes marquee {
   0% {
     transform: translateX(100%);
