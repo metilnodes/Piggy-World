@@ -16,17 +16,29 @@ export function PiggyBank() {
 
   const openExternalLink = async (url: string) => {
     try {
-      // Попытка использовать Farcaster SDK
-      if (typeof window !== "undefined" && (window as any).sdk) {
-        await (window as any).sdk.actions.openUrl(url)
+      // Для PIGGY DAO используем встроенный браузер Farcaster
+      if (url === "https://piggydao.xyz/") {
+        if (typeof window !== "undefined" && (window as any).sdk) {
+          await (window as any).sdk.actions.openUrl(url, { target: "_self" })
+        } else {
+          window.location.href = url
+        }
       } else {
-        // Fallback для обычных браузеров
-        window.open(url, "_blank", "noopener,noreferrer")
+        // Для остальных ссылок используем внешний браузер
+        if (typeof window !== "undefined" && (window as any).sdk) {
+          await (window as any).sdk.actions.openUrl(url)
+        } else {
+          window.open(url, "_blank", "noopener,noreferrer")
+        }
       }
     } catch (error) {
       console.error("Error opening external link:", error)
       // Fallback
-      window.open(url, "_blank", "noopener,noreferrer")
+      if (url === "https://piggydao.xyz/") {
+        window.location.href = url
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer")
+      }
     }
   }
 
