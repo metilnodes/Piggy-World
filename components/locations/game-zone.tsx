@@ -52,6 +52,13 @@ const games = [
     externalUrl: "https://superform-typing-game.vercel.app/",
     isNew: true,
   },
+  {
+    id: "piggy-dao",
+    name: "PIGGY DAO",
+    description: "Community Treasury & Governance",
+    externalUrl: "https://piggydao.xyz",
+    isNew: true,
+  },
 ]
 
 export function GameZone() {
