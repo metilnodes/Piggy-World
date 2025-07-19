@@ -57,6 +57,15 @@ export function PiggyAI() {
           Token Information
           <ExternalLink className="ml-2 h-4 w-4" />
         </button>
+
+        {/* Новая кнопка MINT OINKDENTITY */}
+        <button
+          onClick={() => openExternalLink("http://id.piggyworld.xyz")}
+          className="bg-[#fd0c96] hover:bg-[#fd0c96]/80 text-white font-bold w-full px-4 py-2 rounded-md flex items-center justify-center"
+        >
+          MINT OINKDENTITY
+          <ExternalLink className="ml-2 h-4 w-4" />
+        </button>
       </div>
     </div>
   )

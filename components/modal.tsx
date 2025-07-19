@@ -56,10 +56,17 @@ export function Modal({ isOpen, onClose, title, username, children, width, heigh
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm p-4">
       <div
         ref={modalRef}
-        className={`relative ${title === "Piggy Bank" ? "max-h-[850px]" : title === "Game Zone" ? "max-h-[900px]" : "max-h-[690px]"} overflow-y-auto rounded-lg shadow-lg w-full max-w-md`}
+        className={`relative ${title === "Piggy Bank" ? "max-h-[850px]" : title === "Game Zone" ? "max-h-[900px]" : title === "Piggy AI" ? "max-h-[800px]" : "max-h-[690px]"} overflow-y-auto rounded-lg shadow-lg w-full max-w-md`}
         style={{
           width: width || "350px",
-          maxHeight: title === "Piggy Bank" ? "850px" : title === "Game Zone" ? "900px" : height || "750px", // Увеличиваем высоту только для Piggy Bank
+          maxHeight:
+            title === "Piggy Bank"
+              ? "850px"
+              : title === "Game Zone"
+                ? "900px"
+                : title === "Piggy AI"
+                  ? "800px"
+                  : height || "750px",
           border: "2px solid #fd0c96",
           boxShadow: "0 0 10px #fd0c96, 0 0 20px #fd0c96",
           backgroundImage: "url('/background-grid.png')",
