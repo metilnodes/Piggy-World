@@ -18,12 +18,21 @@ interface NewsItem {
 // Мок данных с pnn.lol
 const mockPnnNews: NewsItem[] = [
   {
+    id: "10",
+    title: "PIGGY IDENTITY CREATED",
+    summary: "Not KYC'd. Not doxxed. Just 100% OINK-verified.",
+    imageUrl: "/images/piggy-identity-preview.jpg",
+    category: "new",
+    timestamp: "2 days ago",
+    url: "https://id.piggyworld.xyz/",
+  },
+  {
     id: "0",
     title: "Welcome to PiggyDAO",
     summary: "The onchain organization that oversees the future direction of PIGGY.",
     imageUrl: "/images/piggy-dao.png",
     category: "breaking",
-    timestamp: "2 days ago",
+    timestamp: "10 days ago",
     url: "https://piggydao.xyz/",
   },
   {
@@ -33,7 +42,7 @@ const mockPnnNews: NewsItem[] = [
       "Superform has officially announced their governance token $UP, sending shockwaves through the DeFi community. The token is expected to launch in Q2 2024.",
     imageUrl: "/flying-pig-up-token.png",
     category: "breaking",
-    timestamp: "5 days ago",
+    timestamp: "15 days ago",
     url: "https://www.pnn.lol/",
   },
   {
@@ -60,7 +69,7 @@ const mockPnnNews: NewsItem[] = [
     summary:
       "The Pendle market for Superform Points has seen record trading volume as anticipation builds for the $UP token launch.",
     category: "alert",
-    timestamp: "5 days ago",
+    timestamp: "20 days ago",
     url: "https://www.pnn.lol/",
   },
   {
@@ -78,7 +87,7 @@ const mockPnnNews: NewsItem[] = [
     summary:
       "In a groundbreaking study, experts have confirmed what we all suspected: pigs are indeed really cute. The study involved showing pictures of pigs to 1,000 participants.",
     category: "tip",
-    timestamp: "2 mins ago",
+    timestamp: "25 days ago",
     url: "https://www.pnn.lol/",
   },
   {
@@ -87,7 +96,7 @@ const mockPnnNews: NewsItem[] = [
     summary:
       "In a follow-up study, researchers have confirmed that pigs remain really cute. This groundbreaking discovery has shocked absolutely no one.",
     category: "alert",
-    timestamp: "15 mins ago",
+    timestamp: "40 days ago",
     url: "https://www.pnn.lol/",
   },
   {
@@ -223,7 +232,7 @@ export function NFTHall() {
               onClick={() => openExternalLink(selectedNews.url)}
               className="neon-button py-1 px-3 text-sm flex items-center inline-flex"
             >
-              {selectedNews.id === "0" ? "Checkout" : "Read Full Story"}
+              {selectedNews.id === "0" ? "Checkout" : selectedNews.id === "10" ? "Create Identity" : "Read Full Story"}
               <ExternalLink className="h-3 w-3 ml-1" />
             </button>
           </div>

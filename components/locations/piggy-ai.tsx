@@ -58,9 +58,35 @@ export function PiggyAI() {
           <ExternalLink className="ml-2 h-4 w-4" />
         </button>
 
-        {/* Новая кнопка MINT OINKDENTITY */}
+        {/* Кнопка MINT OINKDENTITY с улучшенной обработкой ссылок */}
         <button
-          onClick={() => openExternalLink("http://id.piggyworld.xyz")}
+          onClick={async () => {
+            try {
+              console.log("Attempting to open MINT OINKDENTITY link")
+
+              // Попробуем несколько способов открытия ссылки
+              const url = "http://id.piggyworld.xyz"
+
+              // Сначала попробуем через Farcaster SDK
+              if (typeof window !== "undefined") {
+                const sdk = (window as any).sdk || (window as any).parent?.sdk
+
+                if (sdk && sdk.actions && sdk.actions.openUrl) {
+                  console.log("Opening with Farcaster SDK")
+                  await sdk.actions.openUrl(url)
+                  return
+                }
+              }
+
+              // Fallback для веб-версии
+              console.log("Opening with window.open fallback")
+              window.open(url, "_blank", "noopener,noreferrer")
+            } catch (error) {
+              console.error("Error opening MINT OINKDENTITY link:", error)
+              // Последний fallback
+              window.open("http://id.piggyworld.xyz", "_blank", "noopener,noreferrer")
+            }
+          }}
           className="bg-[#fd0c96] hover:bg-[#fd0c96]/80 text-white font-bold w-full px-4 py-2 rounded-md flex items-center justify-center"
         >
           MINT OINKDENTITY
