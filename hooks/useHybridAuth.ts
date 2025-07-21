@@ -268,7 +268,7 @@ export function useHybridAuth(): HybridAuthResult {
           return
         }
 
-        // Проверяем, включен ли режим разработки
+        // Проверяем, включен ��и режим разработки
         const isDevelopment = process.env.NODE_ENV === "development"
 
         // В режиме разработки создаем демо пользователя ТОЛЬКО если нет реального FID

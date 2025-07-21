@@ -65,7 +65,7 @@ export function PiggyAI() {
               console.log("Attempting to open MINT OINKDENTITY link")
 
               // Попробуем несколько способов открытия ссылки
-              const url = "http://id.piggyworld.xyz"
+              const url = "https://id.piggyworld.xyz"
 
               // Сначала попробуем через Farcaster SDK
               if (typeof window !== "undefined") {
@@ -84,7 +84,7 @@ export function PiggyAI() {
             } catch (error) {
               console.error("Error opening MINT OINKDENTITY link:", error)
               // Последний fallback
-              window.open("http://id.piggyworld.xyz", "_blank", "noopener,noreferrer")
+              window.open("https://id.piggyworld.xyz", "_blank", "noopener,noreferrer")
             }
           }}
           className="bg-[#fd0c96] hover:bg-[#fd0c96]/80 text-white font-bold w-full px-4 py-2 rounded-md flex items-center justify-center"
@@ -96,11 +96,11 @@ export function PiggyAI() {
         {/* Дубликат кнопки OINK IT */}
         <button
           onClick={() =>
-            openExternalLink("https://mirror.xyz/basedpiggy.eth/SnvKX-LTceDZaEXO_-LWYCodGK68ftUIdSnnzy5B2HU")
+            openExternalLink("https://id.piggyworld.xyz")
           }
           className="bg-[#fd0c96] hover:bg-[#fd0c96]/80 text-white font-bold w-full px-4 py-2 rounded-md flex items-center justify-center"
         >
-          OINK IT
+          https://opensea.io/collection/piggy-id
           <ExternalLink className="ml-2 h-4 w-4" />
         </button>
       </div>
