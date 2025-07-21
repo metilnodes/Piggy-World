@@ -92,6 +92,17 @@ export function PiggyAI() {
           MINT OINKDENTITY
           <ExternalLink className="ml-2 h-4 w-4" />
         </button>
+
+        {/* Дубликат кнопки OINK IT */}
+        <button
+          onClick={() =>
+            openExternalLink("https://mirror.xyz/basedpiggy.eth/SnvKX-LTceDZaEXO_-LWYCodGK68ftUIdSnnzy5B2HU")
+          }
+          className="bg-[#fd0c96] hover:bg-[#fd0c96]/80 text-white font-bold w-full px-4 py-2 rounded-md flex items-center justify-center"
+        >
+          OINK IT
+          <ExternalLink className="ml-2 h-4 w-4" />
+        </button>
       </div>
     </div>
   )
