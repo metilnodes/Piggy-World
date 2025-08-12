@@ -16,22 +16,6 @@ export function PiggyDao() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const openExternalLink = async (url: string) => {
-    try {
-      // Попытка использовать Farcaster SDK
-      if (typeof window !== "undefined" && (window as any).sdk) {
-        await (window as any).sdk.actions.openUrl(url)
-      } else {
-        // Fallback для обычных браузеров
-        window.open(url, "_blank", "noopener,noreferrer")
-      }
-    } catch (error) {
-      console.error("Error opening external link:", error)
-      // Fallback
-      window.open(url, "_blank", "noopener,noreferrer")
-    }
-  }
-
   // Format current time
   const currentTime = new Date().toLocaleTimeString("en-US", {
     hour12: false,
@@ -49,8 +33,10 @@ export function PiggyDao() {
         </h3>
 
         <div className="flex flex-col gap-3">
-          <button
-            onClick={() => openExternalLink("https://piggydao.xyz/")}
+          <a
+            href="https://piggydao.xyz/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">Donate to the treasury</span>
@@ -62,10 +48,12 @@ export function PiggyDao() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </a>
 
-          <button
-            onClick={() => openExternalLink("https://snapshot.box/#/s:basedpiggy.eth")}
+          <a
+            href="https://snapshot.box/#/s:basedpiggy.eth"
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">Vote on proposals</span>
@@ -77,7 +65,7 @@ export function PiggyDao() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </a>
         </div>
       </div>
 
