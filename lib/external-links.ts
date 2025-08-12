@@ -1,3 +1,5 @@
+"use client"
+
 // Утилита для открытия внешних ссылок в Farcaster Mini Apps
 export const openExternalLink = async (url: string) => {
   try {
@@ -33,7 +35,7 @@ export const openExternalLink = async (url: string) => {
       }
     }
 
-    // Fallback для обычных браузеров - используем тот же метод, что и в GameZone
+    // Fallback для обычных браузеров
     console.log("Opening URL with standard browser method:", url)
     if (typeof window !== "undefined") {
       window.open(url, "_blank", "noopener,noreferrer")
@@ -45,4 +47,30 @@ export const openExternalLink = async (url: string) => {
       window.open(url, "_blank", "noopener,noreferrer")
     }
   }
+}
+
+// Компонент-ссылка, которая автоматически выбирает правильный способ открытия
+import type React from "react"
+
+export const SmartLink = ({
+  href,
+  children,
+  className = "",
+  ...props
+}: {
+  href: string
+  children: React.ReactNode
+  className?: string
+  [key: string]: any
+}) => {
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    await openExternalLink(href)
+  }
+
+  return (
+    <a href={href} onClick={handleClick} className={className} {...props}>
+      {children}
+    </a>
+  )
 }

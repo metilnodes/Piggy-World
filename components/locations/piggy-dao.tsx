@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useAppContext } from "@/contexts/app-context"
 import { Check, Copy } from "lucide-react"
 import { useTreasuryStats } from "@/hooks/useTreasuryStats"
+import { SmartLink } from "@/lib/external-links"
 
 export function PiggyDao() {
   const { balance } = useAppContext()
@@ -33,10 +34,8 @@ export function PiggyDao() {
         </h3>
 
         <div className="flex flex-col gap-3">
-          <a
+          <SmartLink
             href="https://piggydao.xyz/"
-            target="_blank"
-            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">Donate to the treasury</span>
@@ -48,12 +47,10 @@ export function PiggyDao() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </a>
+          </SmartLink>
 
-          <a
+          <SmartLink
             href="https://snapshot.box/#/s:basedpiggy.eth"
-            target="_blank"
-            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">Vote on proposals</span>
@@ -65,7 +62,7 @@ export function PiggyDao() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </a>
+          </SmartLink>
         </div>
       </div>
 

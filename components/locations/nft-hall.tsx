@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { RefreshCw, ExternalLink, Clock, Sparkles } from "lucide-react"
+import { SmartLink } from "@/lib/external-links"
 
 // Типы для новостей
 interface NewsItem {
@@ -227,15 +228,10 @@ export function NFTHall() {
 
             <p className="text-sm text-gray-300 mb-4">{selectedNews.summary}</p>
 
-            <a
-              href={selectedNews.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="neon-button py-1 px-3 text-sm flex items-center inline-flex"
-            >
+            <SmartLink href={selectedNews.url} className="neon-button py-1 px-3 text-sm flex items-center inline-flex">
               {selectedNews.id === "0" ? "Checkout" : selectedNews.id === "10" ? "Create Identity" : "Read Full Story"}
               <ExternalLink className="h-3 w-3 ml-1" />
-            </a>
+            </SmartLink>
           </div>
         </div>
       )}
@@ -285,15 +281,13 @@ export function NFTHall() {
 
       {/* Подвал */}
       <div className="text-center text-xs text-gray-400 mt-4">
-        <a
+        <SmartLink
           href="https://www.pnn.lol/"
-          target="_blank"
-          rel="noopener noreferrer"
           className="flex items-center justify-center gap-1 hover:text-[#fd0c96] transition-colors"
         >
           Visit PNN.lol for more news
           <ExternalLink className="h-3 w-3" />
-        </a>
+        </SmartLink>
       </div>
     </div>
   )

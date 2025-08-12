@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useAppContext } from "@/contexts/app-context"
 import { PiggyBankIcon, Check, Copy } from "lucide-react"
+import { SmartLink } from "@/lib/external-links"
 
 export function PiggyBank() {
   const { balance } = useAppContext()
@@ -18,10 +19,8 @@ export function PiggyBank() {
     <div className="space-y-6">
       {/* PIGGY DAO Button - moved above everything */}
       <div className="mt-2">
-        <a
+        <SmartLink
           href="https://piggydao.xyz/"
-          target="_blank"
-          rel="noopener noreferrer"
           className="w-full neon-button flex items-center justify-center relative"
         >
           <span className="mx-auto">PIGGY DAO</span>
@@ -33,7 +32,7 @@ export function PiggyBank() {
               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
             />
           </svg>
-        </a>
+        </SmartLink>
       </div>
 
       {/* HOW TO BUY $PIGGY Section */}
@@ -44,10 +43,8 @@ export function PiggyBank() {
         </h3>
 
         <div className="flex flex-col gap-3">
-          <a
+          <SmartLink
             href="https://jumper.exchange/?fromChain=1&fromToken=0x0000000000000000000000000000000000000000&toChain=8453&toToken=0x0000000000000000000000000000000000000000"
-            target="_blank"
-            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">GET BASE ETH</span>
@@ -59,12 +56,10 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </a>
+          </SmartLink>
 
-          <a
+          <SmartLink
             href="https://app.uniswap.org/explore/tokens/base/0xe3cf8dbcbdc9b220ddead0bd6342e245daff934d"
-            target="_blank"
-            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">BUY PIGGY ON BASE</span>
@@ -76,7 +71,7 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </a>
+          </SmartLink>
         </div>
       </div>
 
@@ -85,10 +80,8 @@ export function PiggyBank() {
         <h3 className="text-center font-bold text-white mb-4">ADVANCED ONCHAIN FINANCE</h3>
 
         <div className="flex flex-col gap-3">
-          <a
+          <SmartLink
             href="https://app.uniswap.org/explore/pools/base/0xF16EAF2801D9dEd435b7fc5F0ec78048C4142C3e"
-            target="_blank"
-            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">PROVIDE ETH/PIGGY LIQUIDITY</span>
@@ -100,12 +93,10 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </a>
+          </SmartLink>
 
-          <a
+          <SmartLink
             href="https://www.superform.xyz/piggy/"
-            target="_blank"
-            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">GO TO THE SLOP BUCKET</span>
@@ -117,12 +108,10 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </a>
+          </SmartLink>
 
-          <a
+          <SmartLink
             href="https://www.superform.xyz/vault/Ni18DxfV9gHyUIEWtjkkC/"
-            target="_blank"
-            rel="noopener noreferrer"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">DEPOSIT IN SPICY PIGGY VAULT</span>
@@ -134,7 +123,7 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </a>
+          </SmartLink>
         </div>
       </div>
 
