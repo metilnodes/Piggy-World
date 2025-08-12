@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-  },
   env: {
     // Убедись, что DATABASE_URL использует pooler адрес (не raw compute endpoint)
     // Пример: postgresql://user:pass@...pooler.neon.tech/dbname
@@ -22,8 +19,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // ❌ НЕ используем output: 'export' - это ломает API routes
-  // output: 'export', // <-- убрано если было
 }
 
 export default nextConfig
