@@ -64,7 +64,11 @@ export function PiggyDao() {
         >
           <div className="flex items-center">
             <div className="w-12 h-12 rounded-lg bg-black/30 flex items-center justify-center mr-3 flex-shrink-0 border border-[#fd0c96]/30">
-              <img src="/images/casino.png" alt="Mint Piggy ID" className="w-8 h-8 object-contain" />
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/favicon-GwI8vCLZp7Q8oZIm5bMTtBgA6v1fv0.png"
+                alt="Mint Piggy ID"
+                className="w-8 h-8 object-contain"
+              />
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-white">Mint Piggy ID</h3>
