@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useAppContext } from "@/contexts/app-context"
 import { PiggyBankIcon, Check, Copy } from "lucide-react"
+import { SmartLink } from "@/components/smart-link"
 
 export function PiggyBank() {
   const { balance } = useAppContext()
@@ -14,40 +15,12 @@ export function PiggyBank() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const openExternalLink = async (url: string) => {
-    try {
-      // Для PIGGY DAO используем встроенный браузер Farcaster
-      if (url === "https://piggydao.xyz/") {
-        if (typeof window !== "undefined" && (window as any).sdk) {
-          await (window as any).sdk.actions.openUrl(url, { target: "_self" })
-        } else {
-          window.location.href = url
-        }
-      } else {
-        // Для остальных ссылок используем внешний браузер
-        if (typeof window !== "undefined" && (window as any).sdk) {
-          await (window as any).sdk.actions.openUrl(url)
-        } else {
-          window.open(url, "_blank", "noopener,noreferrer")
-        }
-      }
-    } catch (error) {
-      console.error("Error opening external link:", error)
-      // Fallback
-      if (url === "https://piggydao.xyz/") {
-        window.location.href = url
-      } else {
-        window.open(url, "_blank", "noopener,noreferrer")
-      }
-    }
-  }
-
   return (
     <div className="space-y-6">
       {/* PIGGY DAO Button - moved above everything */}
       <div className="mt-2">
-        <button
-          onClick={() => openExternalLink("https://piggydao.xyz/")}
+        <SmartLink
+          href="https://piggydao.xyz/"
           className="w-full neon-button flex items-center justify-center relative"
         >
           <span className="mx-auto">PIGGY DAO</span>
@@ -59,7 +32,7 @@ export function PiggyBank() {
               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
             />
           </svg>
-        </button>
+        </SmartLink>
       </div>
 
       {/* HOW TO BUY $PIGGY Section */}
@@ -70,12 +43,8 @@ export function PiggyBank() {
         </h3>
 
         <div className="flex flex-col gap-3">
-          <button
-            onClick={() =>
-              openExternalLink(
-                "https://jumper.exchange/?fromChain=1&fromToken=0x0000000000000000000000000000000000000000&toChain=8453&toToken=0x0000000000000000000000000000000000000000",
-              )
-            }
+          <SmartLink
+            href="https://jumper.exchange/?fromChain=1&fromToken=0x0000000000000000000000000000000000000000&toChain=8453&toToken=0x0000000000000000000000000000000000000000"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">GET BASE ETH</span>
@@ -87,12 +56,10 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </SmartLink>
 
-          <button
-            onClick={() =>
-              openExternalLink("https://app.uniswap.org/explore/tokens/base/0xe3cf8dbcbdc9b220ddead0bd6342e245daff934d")
-            }
+          <SmartLink
+            href="https://app.uniswap.org/explore/tokens/base/0xe3cf8dbcbdc9b220ddead0bd6342e245daff934d"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">BUY PIGGY ON BASE</span>
@@ -104,7 +71,7 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </SmartLink>
         </div>
       </div>
 
@@ -113,10 +80,8 @@ export function PiggyBank() {
         <h3 className="text-center font-bold text-white mb-4">ADVANCED ONCHAIN FINANCE</h3>
 
         <div className="flex flex-col gap-3">
-          <button
-            onClick={() =>
-              openExternalLink("https://app.uniswap.org/explore/pools/base/0xF16EAF2801D9dEd435b7fc5F0ec78048C4142C3e")
-            }
+          <SmartLink
+            href="https://app.uniswap.org/explore/pools/base/0xF16EAF2801D9dEd435b7fc5F0ec78048C4142C3e"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">PROVIDE ETH/PIGGY LIQUIDITY</span>
@@ -128,10 +93,10 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </SmartLink>
 
-          <button
-            onClick={() => openExternalLink("https://www.superform.xyz/piggy/")}
+          <SmartLink
+            href="https://www.superform.xyz/piggy/"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">GO TO THE SLOP BUCKET</span>
@@ -143,10 +108,10 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </SmartLink>
 
-          <button
-            onClick={() => openExternalLink("https://www.superform.xyz/vault/Ni18DxfV9gHyUIEWtjkkC/")}
+          <SmartLink
+            href="https://www.superform.xyz/vault/Ni18DxfV9gHyUIEWtjkkC/"
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">DEPOSIT IN SPICY PIGGY VAULT</span>
@@ -158,7 +123,7 @@ export function PiggyBank() {
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-          </button>
+          </SmartLink>
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import { Send, Heart, Coins, AlertTriangle, RefreshCw } from "lucide-react"
 import { useHybridAuth } from "@/hooks/useHybridAuth"
 import { useBalance } from "@/contexts/balance-context"
 import { resolveUsernameToFid } from "@/lib/client-neynar"
-import { openExternalLink } from "@/lib/external-links"
+import { SmartLink } from "@/components/smart-link"
 
 interface ChatMessage {
   id: string
@@ -747,20 +747,18 @@ export function OinkOink() {
           </p>
         </div>
         <div className="flex justify-center gap-2">
-          <a
+          <SmartLink
             href="https://discord.gg/superform"
-            target="_blank"
-            rel="noopener noreferrer"
             className="inline-block bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs py-1 px-3 rounded-full transition-colors"
           >
             Join Discord
-          </a>
-          <button
-            onClick={() => openExternalLink("https://t.me/piggyisforthepeople")}
+          </SmartLink>
+          <SmartLink
+            href="https://t.me/piggyisforthepeople"
             className="inline-block bg-[#0088cc] hover:bg-[#0077b5] text-white text-xs py-1 px-3 rounded-full transition-colors"
           >
             Join Telegram
-          </button>
+          </SmartLink>
         </div>
       </div>
     </div>
