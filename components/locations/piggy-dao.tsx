@@ -284,28 +284,44 @@ export function PiggyDao() {
               <h3 className="text-[#fd0c96] text-sm font-bold mb-4">LIVE PREVIEW</h3>
               <div className="bg-black/50 border border-[#fd0c96]/30 rounded-lg p-4">
                 {firstName || serName || passportNumber || previewUrl ? (
-                  <div className="space-y-2">
+                  <div
+                    className="relative w-full h-64 bg-cover bg-center rounded-lg overflow-hidden"
+                    style={{ backgroundImage: "url(/images/background-id.png)" }}
+                  >
+                    {/* Фото агента - позиционируется в правом верхнем углу */}
                     {previewUrl && (
-                      <div className="flex justify-center mb-4">
+                      <div className="absolute top-4 right-4">
                         <img
                           src={previewUrl || "/placeholder.svg"}
                           alt="Agent Photo"
-                          className="w-24 h-24 rounded-lg object-cover border border-[#fd0c96]/30"
+                          className="w-16 h-16 rounded object-cover border border-black"
                         />
                       </div>
                     )}
-                    <div className="text-center space-y-1">
-                      <div className="text-white font-bold">
-                        {firstName} {serName}
-                      </div>
-                      <div className="text-gray-400 text-sm">ID: {passportNumber}</div>
-                      <div className="text-[#fd0c96] text-xs">PIGGY AGENT</div>
-                      {username && (
-                        <div className="text-gray-500 text-xs">
+
+                    {/* First Name - позиционируется в области First Name на карте */}
+                    <div className="absolute top-20 left-8">
+                      <div className="text-black font-bold text-sm">{firstName}</div>
+                    </div>
+
+                    {/* Ser-name - позиционируется в области Ser-name на карте */}
+                    <div className="absolute top-12 left-8">
+                      <div className="text-black font-bold text-sm">{serName}</div>
+                    </div>
+
+                    {/* Passport Number - позиционируется в правом верхнем углу рядом с фото */}
+                    <div className="absolute top-4 right-24">
+                      <div className="text-black font-bold text-xs">{passportNumber}</div>
+                    </div>
+
+                    {/* Дополнительная информация внизу карты */}
+                    {username && (
+                      <div className="absolute bottom-4 left-8">
+                        <div className="text-black text-xs font-mono">
                           @{username} (FID: {fid})
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-8">
