@@ -353,7 +353,16 @@ export function PiggyDao() {
         <div className="space-y-6">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-[#fd0c96] mb-2">ID PREVIEW</h1>
-            <p className="text-gray-400 text-sm">Coming Soon...</p>
+          </div>
+
+          <div className="w-full h-[600px] border border-[#fd0c96]/30 rounded-lg overflow-hidden">
+            <iframe
+              src="https://id.piggyworld.xyz/"
+              className="w-full h-full"
+              frameBorder="0"
+              title="Piggy ID Preview"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            />
           </div>
         </div>
       </div>
