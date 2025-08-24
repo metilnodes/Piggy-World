@@ -1,8 +1,10 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { useAppContext } from "@/contexts/app-context"
-import { Check, Copy, ArrowLeft, ChevronRight } from "lucide-react"
+import { Check, Copy, ArrowLeft, ChevronRight, Upload, Download } from "lucide-react"
 import { useTreasuryStats } from "@/hooks/useTreasuryStats"
 import { SmartLink } from "@/components/smart-link"
 
@@ -11,6 +13,12 @@ export function PiggyDao() {
   const [copied, setCopied] = useState(false)
   const stats = useTreasuryStats()
   const [selectedSection, setSelectedSection] = useState<string | null>(null)
+
+  const [firstName, setFirstName] = useState("")
+  const [serName, setSerName] = useState("")
+  const [passportNumber, setPassportNumber] = useState("")
+  const [agentPhoto, setAgentPhoto] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -24,6 +32,20 @@ export function PiggyDao() {
 
   const handleBackToMain = () => {
     setSelectedSection(null)
+  }
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setAgentPhoto(file)
+      const url = URL.createObjectURL(file)
+      setPreviewUrl(url)
+    }
+  }
+
+  const handleMintNFT = () => {
+    // TODO: Implement NFT minting logic
+    console.log("Minting NFT with:", { firstName, serName, passportNumber, agentPhoto })
   }
 
   // Format current time
@@ -47,9 +69,133 @@ export function PiggyDao() {
           </button>
         </div>
 
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-[#fd0c96] mb-4">Mint Piggy ID</h2>
-          <p className="text-gray-400">Coming soon...</p>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-[#fd0c96] mb-2">PIGGY ID</h1>
+            <p className="text-gray-400 text-sm">OINKGENERATOR</p>
+            <p className="text-white font-bold mt-4">AGENT REGISTRATION</p>
+          </div>
+
+          {/* Form */}
+          <div className="space-y-4">
+            <div className="text-[#fd0c96] text-sm font-bold mb-4">&gt; INITIALIZE YOUR PIGGY ID</div>
+
+            {/* First Name */}
+            <div>
+              <label className="block text-[#fd0c96] text-sm font-bold mb-2">&gt; FIRST NAME</label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value.slice(0, 12))}
+                maxLength={12}
+                className="w-full bg-black/50 border border-[#fd0c96]/30 rounded-lg p-3 text-white focus:border-[#fd0c96] focus:outline-none"
+                placeholder="Enter first name"
+              />
+              <div className="text-gray-400 text-xs mt-1">{firstName.length}/12 CHARACTERS</div>
+            </div>
+
+            {/* Ser Name */}
+            <div>
+              <label className="block text-[#fd0c96] text-sm font-bold mb-2">&gt; SER-NAME</label>
+              <input
+                type="text"
+                value={serName}
+                onChange={(e) => setSerName(e.target.value.slice(0, 12))}
+                maxLength={12}
+                className="w-full bg-black/50 border border-[#fd0c96]/30 rounded-lg p-3 text-white focus:border-[#fd0c96] focus:outline-none"
+                placeholder="Enter ser-name"
+              />
+              <div className="text-gray-400 text-xs mt-1">{serName.length}/12 CHARACTERS</div>
+            </div>
+
+            {/* Passport Number */}
+            <div>
+              <label className="block text-[#fd0c96] text-sm font-bold mb-2">&gt; PASSPORT NUMBER</label>
+              <input
+                type="text"
+                value={passportNumber}
+                onChange={(e) => setPassportNumber(e.target.value.slice(0, 7))}
+                maxLength={7}
+                className="w-full bg-black/50 border border-[#fd0c96]/30 rounded-lg p-3 text-white focus:border-[#fd0c96] focus:outline-none"
+                placeholder="Enter passport number"
+              />
+              <div className="text-gray-400 text-xs mt-1">{passportNumber.length}/7 CHARACTERS</div>
+            </div>
+
+            {/* Agent Photo */}
+            <div>
+              <label className="block text-[#fd0c96] text-sm font-bold mb-2">&gt; AGENT PHOTO</label>
+              <div className="relative">
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" id="photo-upload" />
+                <label
+                  htmlFor="photo-upload"
+                  className="w-full bg-black/50 border border-[#fd0c96]/30 rounded-lg p-3 text-white hover:border-[#fd0c96] cursor-pointer flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Upload className="h-4 w-4" />
+                  {agentPhoto ? agentPhoto.name : "UPLOAD PHOTO"}
+                </label>
+              </div>
+            </div>
+
+            {/* Mint Button */}
+            <button
+              onClick={handleMintNFT}
+              disabled={!firstName || !serName || !passportNumber || !agentPhoto}
+              className="w-full bg-[#fd0c96] hover:bg-[#fd0c96]/80 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              MINT AS NFT
+            </button>
+
+            {/* Live Preview */}
+            <div className="mt-6">
+              <h3 className="text-[#fd0c96] text-sm font-bold mb-4">LIVE PREVIEW</h3>
+              <div className="bg-black/50 border border-[#fd0c96]/30 rounded-lg p-4">
+                {firstName || serName || passportNumber || previewUrl ? (
+                  <div className="space-y-2">
+                    {previewUrl && (
+                      <div className="flex justify-center mb-4">
+                        <img
+                          src={previewUrl || "/placeholder.svg"}
+                          alt="Agent Photo"
+                          className="w-24 h-24 rounded-lg object-cover border border-[#fd0c96]/30"
+                        />
+                      </div>
+                    )}
+                    <div className="text-center space-y-1">
+                      <div className="text-white font-bold">
+                        {firstName} {serName}
+                      </div>
+                      <div className="text-gray-400 text-sm">ID: {passportNumber}</div>
+                      <div className="text-[#fd0c96] text-xs">PIGGY AGENT</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-[#fd0c96] text-sm font-bold mb-2">&gt; PIGGY ID LOADING... STANDBY</div>
+                    <div className="text-gray-400 text-xs">&gt; ENTER YOUR NAME TO SPAWN OINKDENTITY</div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Check ID Collection */}
+            <SmartLink
+              href="https://opensea.io/collection/piggy-id"
+              className="w-full neon-button flex items-center justify-center relative mt-4"
+            >
+              <span className="mx-auto">CHECK ID COLLECTION</span>
+              <svg className="h-4 w-4 absolute right-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </SmartLink>
+          </div>
         </div>
       </div>
     )
