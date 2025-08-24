@@ -337,6 +337,29 @@ export function PiggyDao() {
     )
   }
 
+  if (selectedSection === "id-preview") {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={handleBackToMain}
+            className="flex items-center text-[#fd0c96] hover:text-white transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            <span>Back to Piggy Dao</span>
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-[#fd0c96] mb-2">ID PREVIEW</h1>
+            <p className="text-gray-400 text-sm">Coming Soon...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3">
@@ -354,6 +377,26 @@ export function PiggyDao() {
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-white">Mint Piggy ID</h3>
+              <p className="text-xs text-gray-300">OINKGENERATOR</p>
+            </div>
+            <ChevronRight className="h-5 w-5 text-[#fd0c96]" />
+          </div>
+        </button>
+
+        <button
+          onClick={() => handleSelectSection("id-preview")}
+          className="bg-black/50 border border-[#fd0c96] rounded-lg p-3 cursor-pointer transition-all duration-300 hover:bg-[#fd0c96]/10 hover:border-[#fd0c96]/80"
+        >
+          <div className="flex items-center">
+            <div className="w-12 h-12 rounded-lg bg-black/30 flex items-center justify-center mr-3 flex-shrink-0 border border-[#fd0c96]/30">
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/favicon-GwI8vCLZp7Q8oZIm5bMTtBgA6v1fv0.png"
+                alt="ID Preview"
+                className="w-8 h-8 object-contain"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-white">ID PREVIEW</h3>
               <p className="text-xs text-gray-300">OINKGENERATOR</p>
             </div>
             <ChevronRight className="h-5 w-5 text-[#fd0c96]" />
