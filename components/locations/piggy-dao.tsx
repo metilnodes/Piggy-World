@@ -57,6 +57,24 @@ export function PiggyDao() {
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-col gap-3">
+        <button
+          onClick={() => handleSelectSection("mint-piggy-id")}
+          className="bg-black/50 border border-[#fd0c96] rounded-lg p-3 cursor-pointer transition-all duration-300 hover:bg-[#fd0c96]/10 hover:border-[#fd0c96]/80"
+        >
+          <div className="flex items-center">
+            <div className="w-12 h-12 rounded-lg bg-black/30 flex items-center justify-center mr-3 flex-shrink-0 border border-[#fd0c96]/30">
+              <img src="/images/casino.png" alt="Mint Piggy ID" className="w-8 h-8 object-contain" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-white">Mint Piggy ID</h3>
+              <p className="text-xs text-gray-300">OINKGENERATOR</p>
+            </div>
+            <ChevronRight className="h-5 w-5 text-[#fd0c96]" />
+          </div>
+        </button>
+      </div>
+
       {/* HOW TO BUY $PIGGY Section */}
       <div className="mt-2">
         <h3 className="text-center font-bold text-white mb-4 flex items-center justify-center gap-2">
@@ -64,22 +82,6 @@ export function PiggyDao() {
         </h3>
 
         <div className="flex flex-col gap-3">
-          <button
-            onClick={() => handleSelectSection("mint-piggy-id")}
-            className="bg-black/50 border border-[#fd0c96] rounded-lg p-3 cursor-pointer transition-all duration-300 hover:bg-[#fd0c96]/10 hover:border-[#fd0c96]/80"
-          >
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-lg bg-black/30 flex items-center justify-center mr-3 flex-shrink-0 border border-[#fd0c96]/30">
-                <img src="/images/casino.png" alt="Mint Piggy ID" className="w-8 h-8 object-contain" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-white">Mint Piggy ID</h3>
-                <p className="text-xs text-gray-300">OINKGENERATOR</p>
-              </div>
-              <ChevronRight className="h-5 w-5 text-[#fd0c96]" />
-            </div>
-          </button>
-
           <SmartLink
             href="https://piggydao.xyz/"
             className="w-full neon-button flex items-center justify-center relative"
