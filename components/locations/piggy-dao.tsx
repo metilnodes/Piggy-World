@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useAppContext } from "@/contexts/app-context"
-import { Check, Copy, ArrowLeft } from "lucide-react"
+import { Check, Copy, ArrowLeft, ChevronRight } from "lucide-react"
 import { useTreasuryStats } from "@/hooks/useTreasuryStats"
 import { SmartLink } from "@/components/smart-link"
 
@@ -66,14 +66,17 @@ export function PiggyDao() {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => handleSelectSection("mint-piggy-id")}
-            className="w-full neon-button flex items-center justify-center relative"
+            className="bg-black/50 border border-[#fd0c96] rounded-lg p-3 cursor-pointer transition-all duration-300 hover:bg-[#fd0c96]/10 hover:border-[#fd0c96]/80"
           >
-            <div className="flex items-center gap-2 mx-auto">
-              <span className="text-lg">🆔</span>
-              <div className="text-left">
-                <div className="font-bold">Mint Piggy ID</div>
-                <div className="text-xs text-gray-300">OINKGENERATOR</div>
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-lg bg-black/30 flex items-center justify-center mr-3 flex-shrink-0 border border-[#fd0c96]/30">
+                <img src="/images/casino.png" alt="Mint Piggy ID" className="w-8 h-8 object-contain" />
               </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-white">Mint Piggy ID</h3>
+                <p className="text-xs text-gray-300">OINKGENERATOR</p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-[#fd0c96]" />
             </div>
           </button>
 
