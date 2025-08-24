@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useAppContext } from "@/contexts/app-context"
-import { Check, Copy } from "lucide-react"
+import { Check, Copy, ArrowLeft } from "lucide-react"
 import { useTreasuryStats } from "@/hooks/useTreasuryStats"
 import { SmartLink } from "@/components/smart-link"
 
@@ -10,11 +10,20 @@ export function PiggyDao() {
   const { balance } = useAppContext()
   const [copied, setCopied] = useState(false)
   const stats = useTreasuryStats()
+  const [selectedSection, setSelectedSection] = useState<string | null>(null)
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleSelectSection = (sectionId: string) => {
+    setSelectedSection(sectionId)
+  }
+
+  const handleBackToMain = () => {
+    setSelectedSection(null)
   }
 
   // Format current time
@@ -25,6 +34,27 @@ export function PiggyDao() {
     second: "2-digit",
   })
 
+  if (selectedSection === "mint-piggy-id") {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={handleBackToMain}
+            className="flex items-center text-[#fd0c96] hover:text-white transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            <span>Back to Piggy Dao</span>
+          </button>
+        </div>
+
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-[#fd0c96] mb-4">Mint Piggy ID</h2>
+          <p className="text-gray-400">Coming soon...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* HOW TO BUY $PIGGY Section */}
@@ -34,6 +64,19 @@ export function PiggyDao() {
         </h3>
 
         <div className="flex flex-col gap-3">
+          <button
+            onClick={() => handleSelectSection("mint-piggy-id")}
+            className="w-full neon-button flex items-center justify-center relative"
+          >
+            <div className="flex items-center gap-2 mx-auto">
+              <span className="text-lg">🆔</span>
+              <div className="text-left">
+                <div className="font-bold">Mint Piggy ID</div>
+                <div className="text-xs text-gray-300">OINKGENERATOR</div>
+              </div>
+            </div>
+          </button>
+
           <SmartLink
             href="https://piggydao.xyz/"
             className="w-full neon-button flex items-center justify-center relative"
