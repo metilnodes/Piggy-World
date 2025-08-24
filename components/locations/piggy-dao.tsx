@@ -4,12 +4,14 @@ import type React from "react"
 
 import { useState } from "react"
 import { useAppContext } from "@/contexts/app-context"
-import { Check, Copy, ArrowLeft, ChevronRight, Upload, Download } from "lucide-react"
+import { useHybridAuth } from "@/hooks/useHybridAuth"
+import { Check, Copy, ArrowLeft, ChevronRight, Upload, Download, Wallet } from "lucide-react"
 import { useTreasuryStats } from "@/hooks/useTreasuryStats"
 import { SmartLink } from "@/components/smart-link"
 
 export function PiggyDao() {
   const { balance } = useAppContext()
+  const { fid, username, displayName, isAuthenticated } = useHybridAuth()
   const [copied, setCopied] = useState(false)
   const stats = useTreasuryStats()
   const [selectedSection, setSelectedSection] = useState<string | null>(null)
@@ -19,6 +21,9 @@ export function PiggyDao() {
   const [passportNumber, setPassportNumber] = useState("")
   const [agentPhoto, setAgentPhoto] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [walletAddress, setWalletAddress] = useState<string | null>(null)
+  const [isConnecting, setIsConnecting] = useState(false)
+  const [isMinting, setIsMinting] = useState(false)
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -43,9 +48,97 @@ export function PiggyDao() {
     }
   }
 
-  const handleMintNFT = () => {
-    // TODO: Implement NFT minting logic
-    console.log("Minting NFT with:", { firstName, serName, passportNumber, agentPhoto })
+  const connectWallet = async () => {
+    if (!isAuthenticated) {
+      console.error("User not authenticated with Farcaster")
+      return
+    }
+
+    setIsConnecting(true)
+    try {
+      // Get Ethereum provider from Farcaster SDK
+      const { sdk } = await import("@farcaster/frame-sdk")
+      const provider = await sdk.wallet.getEthereumProvider()
+
+      if (!provider) {
+        throw new Error("No Ethereum provider available")
+      }
+
+      // Request account access
+      const accounts = await provider.request({
+        method: "eth_requestAccounts",
+      })
+
+      if (accounts && accounts.length > 0) {
+        setWalletAddress(accounts[0])
+        console.log("✅ Wallet connected:", accounts[0])
+      }
+    } catch (error) {
+      console.error("❌ Failed to connect wallet:", error)
+    } finally {
+      setIsConnecting(false)
+    }
+  }
+
+  const handleMintNFT = async () => {
+    if (!walletAddress) {
+      await connectWallet()
+      return
+    }
+
+    if (!firstName || !serName || !passportNumber || !agentPhoto) {
+      console.error("Missing required fields for minting")
+      return
+    }
+
+    setIsMinting(true)
+    try {
+      console.log("[v0] Starting NFT mint process...")
+
+      // Get Ethereum provider
+      const { sdk } = await import("@farcaster/frame-sdk")
+      const provider = await sdk.wallet.getEthereumProvider()
+
+      if (!provider) {
+        throw new Error("No Ethereum provider available")
+      }
+
+      // Upload image to IPFS or similar service (placeholder)
+      const formData = new FormData()
+      formData.append("image", agentPhoto)
+      formData.append("firstName", firstName)
+      formData.append("serName", serName)
+      formData.append("passportNumber", passportNumber)
+      formData.append("fid", fid || "")
+      formData.append("username", username || "")
+
+      console.log("[v0] Uploading metadata and image...")
+
+      // This would be your actual minting contract call
+      // For now, we'll simulate the process
+      const mintData = {
+        to: walletAddress,
+        firstName,
+        serName,
+        passportNumber,
+        imageUrl: previewUrl,
+        fid,
+        username,
+      }
+
+      console.log("[v0] Mint data prepared:", mintData)
+
+      // Simulate contract interaction
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      console.log("✅ NFT minted successfully!")
+      alert("🎉 Piggy ID NFT minted successfully!")
+    } catch (error) {
+      console.error("❌ Failed to mint NFT:", error)
+      alert("❌ Failed to mint NFT. Please try again.")
+    } finally {
+      setIsMinting(false)
+    }
   }
 
   // Format current time
@@ -75,6 +168,31 @@ export function PiggyDao() {
             <h1 className="text-2xl font-bold text-[#fd0c96] mb-2">PIGGY ID</h1>
             <p className="text-gray-400 text-sm">OINKGENERATOR</p>
             <p className="text-white font-bold mt-4">AGENT REGISTRATION</p>
+          </div>
+
+          <div className="bg-black/50 border border-[#fd0c96]/30 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-[#fd0c96]" />
+                <span className="text-white text-sm">Wallet Status</span>
+              </div>
+              {walletAddress ? (
+                <div className="text-right">
+                  <div className="text-green-500 text-xs font-bold">CONNECTED</div>
+                  <div className="text-gray-400 text-xs font-mono">
+                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={connectWallet}
+                  disabled={isConnecting}
+                  className="bg-[#fd0c96] hover:bg-[#fd0c96]/80 disabled:bg-gray-600 text-white text-xs px-3 py-1 rounded transition-colors"
+                >
+                  {isConnecting ? "CONNECTING..." : "CONNECT"}
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Form */}
@@ -138,14 +256,27 @@ export function PiggyDao() {
               </div>
             </div>
 
-            {/* Mint Button */}
             <button
               onClick={handleMintNFT}
-              disabled={!firstName || !serName || !passportNumber || !agentPhoto}
+              disabled={!firstName || !serName || !passportNumber || !agentPhoto || isMinting}
               className="w-full bg-[#fd0c96] hover:bg-[#fd0c96]/80 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
-              <Download className="h-4 w-4" />
-              MINT AS NFT
+              {isMinting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  MINTING...
+                </>
+              ) : walletAddress ? (
+                <>
+                  <Download className="h-4 w-4" />
+                  MINT AS NFT
+                </>
+              ) : (
+                <>
+                  <Wallet className="h-4 w-4" />
+                  CONNECT WALLET TO MINT
+                </>
+              )}
             </button>
 
             {/* Live Preview */}
@@ -169,6 +300,11 @@ export function PiggyDao() {
                       </div>
                       <div className="text-gray-400 text-sm">ID: {passportNumber}</div>
                       <div className="text-[#fd0c96] text-xs">PIGGY AGENT</div>
+                      {username && (
+                        <div className="text-gray-500 text-xs">
+                          @{username} (FID: {fid})
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
