@@ -15,6 +15,7 @@ function AuthenticatedApp() {
   const auth = useSimpleAuth()
   const [mounted, setMounted] = useState(false)
   const [appEntered, setAppEntered] = useState(false)
+  const [sdkReady, setSdkReady] = useState(false)
 
   // Проверяем режим разработки
   const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === "true"
@@ -23,9 +24,65 @@ function AuthenticatedApp() {
     setMounted(true)
   }, [])
 
-  // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
   useEffect(() => {
     if (!mounted) return
+
+    const initializeFarcasterSDK = async () => {
+      try {
+        console.log("🚀 Initializing Farcaster SDK...")
+
+        // Проверяем, находимся ли мы в Farcaster контексте
+        const isInFarcaster =
+          typeof window !== "undefined" &&
+          (window.parent !== window ||
+            navigator.userAgent.toLowerCase().includes("warpcast") ||
+            navigator.userAgent.toLowerCase().includes("farcaster") ||
+            document.referrer.includes("warpcast") ||
+            document.referrer.includes("farcaster") ||
+            !!document.querySelector('meta[name="fc:frame"]'))
+
+        console.log("🔍 Farcaster context detected:", isInFarcaster)
+
+        if (isInFarcaster) {
+          // Динамический импорт SDK
+          const { sdk } = await import("@farcaster/miniapp-sdk")
+
+          // Обязательный вызов ready() для скрытия splash screen
+          await sdk.actions.ready({
+            disableNativeGestures: true,
+          })
+
+          // Делаем SDK доступным глобально
+          ;(window as any).sdk = sdk
+
+          console.log("✅ Farcaster SDK initialized and ready() called")
+          setSdkReady(true)
+
+          // Добавляем поддержку Add Mini App
+          try {
+            if (sdk?.actions?.addMiniApp) {
+              await sdk.actions.addMiniApp()
+              console.log("🎯 Mini App addMiniApp triggered")
+            }
+          } catch (addError) {
+            console.warn("⚠️ addMiniApp failed (non-critical):", addError)
+          }
+        } else {
+          console.log("📱 Not in Farcaster context, skipping SDK initialization")
+          setSdkReady(true)
+        }
+      } catch (error) {
+        console.error("❌ Farcaster SDK initialization error:", error)
+        setSdkReady(true) // Продолжаем работу даже при ошибке
+      }
+    }
+
+    initializeFarcasterSDK()
+  }, [mounted])
+
+  // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
+  useEffect(() => {
+    if (!mounted || !sdkReady) return
 
     const timer = setTimeout(() => {
       if (!auth.isAuthenticated && !auth.error) {
@@ -35,54 +92,33 @@ function AuthenticatedApp() {
     }, 10000) // Увеличено до 10 секунд
 
     return () => clearTimeout(timer)
-  }, [mounted, auth.isAuthenticated, auth.error])
-
-  // Инициализация Frame SDK после монтирования
-  useEffect(() => {
-    if (!mounted) return
-
-    const initializeFrames = async () => {
-      try {
-        const { initFrames, isInWarpcast } = await import("@/app/frames/index")
-        const isInFrame = isInWarpcast()
-        console.log("🖼️ Frame context:", { isInFrame })
-
-        if (isInFrame) {
-          await initFrames()
-
-          // Добавляем поддержку Add Mini App с автоматическим добавлением при запуске
-          const triggerAddMiniApp = async () => {
-            if (typeof window === "undefined") return
-            const sdk = (window as any).sdk
-            if (sdk?.actions?.addMiniApp) {
-              try {
-                await sdk.actions.addMiniApp()
-                console.log("🎯 Mini App addMiniApp triggered")
-              } catch (e) {
-                console.error("❌ addMiniApp error:", e)
-              }
-            }
-          }
-
-          // Вызываем добавление приложения
-          triggerAddMiniApp()
-        }
-      } catch (error) {
-        console.error("Frame initialization error:", error)
-      }
-    }
-
-    initializeFrames()
-  }, [mounted])
+  }, [mounted, sdkReady, auth.isAuthenticated, auth.error])
 
   const handleRetry = () => {
     console.log("🔄 Retrying authentication...")
     window.location.reload()
   }
 
-  // Не показываем ничего до монтирования
-  if (!mounted) {
-    return null
+  // Не показываем ничего до монтирования и инициализации SDK
+  if (!mounted || !sdkReady) {
+    return (
+      <main
+        className="relative w-full h-full overflow-hidden"
+        style={{
+          backgroundImage: "url('/background.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="absolute inset-0 backdrop-blur-md bg-black bg-opacity-50 z-0" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fd0c96] mx-auto mb-4"></div>
+          <h2 className="text-xl font-bold text-[#fd0c96] mb-2">Initializing...</h2>
+          <p className="text-sm text-gray-300">Setting up Farcaster SDK...</p>
+        </div>
+      </main>
+    )
   }
 
   // Показываем загрузку только если не истек таймаут
