@@ -26,23 +26,16 @@ export const metadata: Metadata = {
     type: "website",
   },
   other: {
-    // Farcaster Frame metadata
-    "fc:frame": JSON.stringify({
-      version: "next",
-      imageUrl: "https://piggyworld.xyz/imageUrl.png",
-      button: {
-        title: "Join Piggy World",
-        action: {
-          type: "launch_frame",
-          name: "Piggy World",
-          url: "https://piggyworld.xyz/",
-          splashImageUrl: "https://piggyworld.xyz/icon.png",
-          splashBackgroundColor: "#000000",
-        },
-      },
-    }),
+    "fc:frame": "vNext",
+    "fc:frame:image": "https://piggyworld.xyz/imageUrl.png",
+    "fc:frame:button:1": "Join Piggy World",
+    "fc:frame:button:1:action": "launch_frame",
+    "fc:frame:button:1:target": "https://piggyworld.xyz/",
+    "of:version": "vNext",
+    "of:accepts:xmtp": "2024-02-01",
+    "of:image": "https://piggyworld.xyz/imageUrl.png",
   },
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({

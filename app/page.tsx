@@ -23,7 +23,6 @@ function AuthenticatedApp() {
     setMounted(true)
   }, [])
 
-  // Гостевой таймаут - если через 5 сек auth не сработал, даем гостевой доступ
   useEffect(() => {
     if (!mounted) return
 
@@ -32,7 +31,7 @@ function AuthenticatedApp() {
         console.log("🕐 Guest timeout - allowing guest access")
         setAppEntered(true)
       }
-    }, 10000) // Увеличено до 10 секунд
+    }, 5000) // Reduced from 10 seconds to 5 seconds
 
     return () => clearTimeout(timer)
   }, [mounted, auth.isAuthenticated, auth.error])
@@ -47,9 +46,10 @@ function AuthenticatedApp() {
         const isInFrame = isInWarpcast()
         console.log("🖼️ Frame context:", { isInFrame })
 
-        if (isInFrame) {
-          await initFrames()
+        const frameInitialized = await initFrames()
+        console.log("🖼️ Frame initialization result:", frameInitialized)
 
+        if (isInFrame || frameInitialized) {
           // Добавляем поддержку Add Mini App с автоматическим добавлением при запуске
           const triggerAddMiniApp = async () => {
             if (typeof window === "undefined") return
@@ -65,7 +65,7 @@ function AuthenticatedApp() {
           }
 
           // Вызываем добавление приложения
-          triggerAddMiniApp()
+          setTimeout(triggerAddMiniApp, 1000) // Small delay to ensure SDK is ready
         }
       } catch (error) {
         console.error("Frame initialization error:", error)

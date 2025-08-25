@@ -3,6 +3,23 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL'
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://*.warpcast.com https://*.farcaster.xyz https://warpcast.com https://farcaster.xyz"
+          }
+        ],
+      },
+    ]
+  },
   env: {
     // Убедись, что DATABASE_URL использует pooler адрес (не raw compute endpoint)
     // Пример: postgresql://user:pass@...pooler.neon.tech/dbname
