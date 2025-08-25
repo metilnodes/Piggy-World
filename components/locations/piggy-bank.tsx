@@ -48,7 +48,15 @@ export function PiggyBank() {
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">GET BASE ETH</span>
-            <svg className="h-4 w-4 absolute right-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 absolute right-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              aria-label="External link"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -63,7 +71,15 @@ export function PiggyBank() {
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">BUY PIGGY ON BASE</span>
-            <svg className="h-4 w-4 absolute right-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 absolute right-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              aria-label="External link"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -85,7 +101,15 @@ export function PiggyBank() {
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">PROVIDE ETH/PIGGY LIQUIDITY</span>
-            <svg className="h-4 w-4 absolute right-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 absolute right-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              aria-label="External link"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -100,7 +124,15 @@ export function PiggyBank() {
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">GO TO THE SLOP BUCKET</span>
-            <svg className="h-4 w-4 absolute right-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 absolute right-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              aria-label="External link"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -115,7 +147,15 @@ export function PiggyBank() {
             className="w-full neon-button flex items-center justify-center relative"
           >
             <span className="mx-auto">DEPOSIT IN SPICY PIGGY VAULT</span>
-            <svg className="h-4 w-4 absolute right-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 absolute right-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              aria-label="External link"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

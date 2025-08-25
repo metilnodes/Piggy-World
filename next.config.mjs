@@ -22,8 +22,23 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // ❌ НЕ используем output: 'export' - это ломает API routes
-  // output: 'export', // <-- убрано если было
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://*.farcaster.xyz https://*.warpcast.com",
+          },
+        ],
+      },
+    ]
+  },
 }
 
 export default nextConfig

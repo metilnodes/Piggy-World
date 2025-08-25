@@ -372,7 +372,9 @@ export function PiggyDao() {
             className="w-full h-full"
             frameBorder="0"
             title="Piggy ID Preview"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"
+            allow="clipboard-write; web-share"
+            loading="lazy"
           />
         </div>
       </div>

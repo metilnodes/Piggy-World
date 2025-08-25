@@ -56,6 +56,10 @@ export function Modal({ isOpen, onClose, title, username, children, width, heigh
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm p-4">
       <div
         ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        aria-describedby="modal-content"
         className={`relative ${title === "Piggy Bank" ? "max-h-[850px]" : title === "Game Zone" ? "max-h-[900px]" : title === "Piggy AI" ? "max-h-[800px]" : "max-h-[690px]"} overflow-y-auto rounded-lg shadow-lg w-full max-w-md`}
         style={{
           width: width || "350px",
@@ -81,6 +85,7 @@ export function Modal({ isOpen, onClose, title, username, children, width, heigh
         >
           <div className="flex items-center gap-2">
             <h2
+              id="modal-title"
               className="text-lg font-bold"
               style={{
                 color: "#fd0c96",
@@ -100,11 +105,13 @@ export function Modal({ isOpen, onClose, title, username, children, width, heigh
             onClick={onClose}
             className="text-[#fd0c96] hover:text-white transition-colors"
             style={{ textShadow: "0 0 5px #fd0c96" }}
+            aria-label="Close modal"
           >
             <X size={20} />
+            <span className="sr-only">Close</span>
           </button>
         </div>
-        <div className="p-4" style={{ background: "rgba(0, 0, 0, 0.4)" }}>
+        <div className="p-4" style={{ background: "rgba(0, 0, 0, 0.4)" }} id="modal-content">
           {children}
         </div>
       </div>
