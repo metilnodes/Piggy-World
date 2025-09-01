@@ -23,6 +23,9 @@
     "signature": "3oF/Wo55DJBOSDRdOHWAk4hYTkHTg6fwataIGoRR92s0KBOttVXVc4medaaFS/s17Gemeax0pa3d8CDiyS8yBxw="
   },
   "baseBuilder": {
-    "allowedAddresses": ["0xEC5D5E9e294BDC490C233488BDD54e6Fe35d7d19"]
+    "allowedAddresses": [
+    "0xec5d5e9e294bdc490c233488bdd54e6fe35d7d19",
+    "0xEC5D5E9e294BDC490C233488BDD54e6Fe35d7d19"
+    ]
   }
 }
